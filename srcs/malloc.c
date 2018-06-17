@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-static t_chunk_types	chunks;
+static t_chunk_types	chunks = {NULL, NULL, NULL};
 
 void					*malloc(size_t size)
 {
@@ -8,10 +8,5 @@ void					*malloc(size_t size)
 
 	if ((chunk = init_chunks(&chunks, size)) == NULL)
 		return (NULL);
-	if ((fd = open("/dev/zero", O_RDWR)) == -1)
-		return (NULL);
-	if ((ptr =
-mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
-		return (NULL);
-	return (ptr);
+	return (NULL);
 }

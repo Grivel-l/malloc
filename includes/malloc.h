@@ -21,11 +21,11 @@ void		*malloc(size_t size);
 
 typedef struct		s_chunk
 {
-	stuct s_chunk	*previous;
-	stuct s_chunk	*next;
+	struct s_chunk	*previous;
+	struct s_chunk	*next;
 	size_t			size;
 	size_t			freed;
-	void			*data
+	void			*data;
 }					t_chunk;
 
 typedef struct		s_chunk_types
@@ -34,5 +34,7 @@ typedef struct		s_chunk_types
 	t_chunk			*small;
 	t_chunk			*large;
 }					t_chunk_types;
+
+t_chunk				*init_chunks(t_chunk_types *chunks, size_t size);
 
 #endif

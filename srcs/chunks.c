@@ -1,29 +1,28 @@
 #include "malloc.h"
 
-size_t	get_chunk_size(size_t size)
+static size_t	get_chunk_size(size_t size)
 {
 	size_t	page_size;
 
 	page_size = getpagesize();
-	return ((sizeof(t_chunk) + size) < page_size ? ((sizeof(t_chunk) + size) / page_size) + 1 : (sizeof(t_chunk) + size)) / page_size);
+	return ((sizeof(t_chunk) + size) < page_size ? ((sizeof(t_chunk) + size) / page_size) + 1 : (sizeof(t_chunk) + size) / page_size);
 }
 
-void	*create_chunk(t_chunk *chunk, size_t size)
+static t_chunk	*create_chunk(t_chunk *chunk, size_t size)
 {
 	int		fd;
-	void	*pointer;
 
 	if ((fd = open("/dev/zero", O_RDWR)) == -1)
 		return (NULL);
-	if ((pointer = mmap(NULL, get_chunk_size(size),
-		PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILEED)
+	if ((chunk = mmap(NULL, get_chunk_size(size),
+		PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
 		return (NULL);
 	if (close(fd) == -1)
 		return (NULL);
-	return (pointer);
+	return (chunk);
 }
 
-void	*init_chunks(t_chunk_types *chunks, size_t size)
+t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
 {
 	if (size <= TINY && chunks->tiny == NULL)
 		return (create_chunk(chunks->tiny, size));
