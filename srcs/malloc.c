@@ -1,20 +1,17 @@
 #include "malloc.h"
 
-void		*malloc(size_t size)
-{
-	size_t	i;
-	int		fd;
-	int		*ptr;
+static t_chunk_types	chunks;
 
-	if ((fd = open("./yo", O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600)) == -1)
+void					*malloc(size_t size)
+{
+	t_chunk	*chunk;
+
+	if ((chunk = init_chunks(&chunks, size)) == NULL)
 		return (NULL);
-	i = 0;
-	while (i <= size)
-	{
-		write(fd, "", 1);
-		i += 1;
-	}
-	if ((ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
+	if ((fd = open("/dev/zero", O_RDWR)) == -1)
+		return (NULL);
+	if ((ptr =
+mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
 		return (NULL);
 	return (ptr);
 }
