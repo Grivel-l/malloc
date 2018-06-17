@@ -25,6 +25,7 @@ typedef struct		s_chunk
 	struct s_chunk	*next;
 	size_t			size;
 	size_t			freed;
+	size_t			total_size;
 	void			*data;
 }					t_chunk;
 

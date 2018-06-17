@@ -8,5 +8,5 @@ void					*malloc(size_t size)
 
 	if ((chunk = init_chunks(&chunks, size)) == NULL)
 		return (NULL);
-	return (NULL);
+	return (chunk->data);
 }
