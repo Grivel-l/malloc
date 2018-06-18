@@ -14,7 +14,9 @@ void		*malloc(size_t size);
 // void		*realloc(void *ptr, size_t size);
 
 # define TINY 128
+# define TINY_M 1
 # define LARGE 131072
+# define LARGE_M 8
 
 typedef struct		s_chunk
 {

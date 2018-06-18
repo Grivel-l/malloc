@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/18 07:14:21 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/06/18 15:48:18 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,5 +21,5 @@ void					*malloc(size_t size)
 
 	if ((chunk = init_chunks(&g_chunks, size)) == NULL)
 		return (NULL);
-	return (chunk + sizeof(chunk));
+	return (chunk + sizeof(t_chunk));
 }
