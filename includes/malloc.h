@@ -13,20 +13,14 @@
 void		*malloc(size_t size);
 // void		*realloc(void *ptr, size_t size);
 
-# define TINY 64
-# define TINY_S 4
-# define SMALL 512
-# define SMALL_S 32
+# define TINY 128
 # define LARGE 131072
 
 typedef struct		s_chunk
 {
-	struct s_chunk	*previous;
 	struct s_chunk	*next;
 	size_t			size;
 	size_t			freed;
-	size_t			total_size;
-	void			*data;
 }					t_chunk;
 
 typedef struct		s_chunk_types
