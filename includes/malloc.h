@@ -33,7 +33,7 @@ typedef struct		s_chunk_types
 	t_chunk			*large;
 }					t_chunk_types;
 
-t_chunk				*get_chunk(t_chunk_types chunks, void *ptr);
 t_chunk				*init_chunks(t_chunk_types *chunks, size_t size);
+t_chunk				*get_chunk(t_chunk_types chunks, t_chunk **previous, void *ptr);
 
 #endif
