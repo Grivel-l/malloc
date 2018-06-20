@@ -7,8 +7,9 @@
 # include <unistd.h>
 # include <sys/mman.h>
 # include <errno.h>
+# include <string.h>
 
-// void		free(void *ptr);
+void		free(void *ptr);
 // void		show_alloc_mem(void);
 void		*malloc(size_t size);
 // void		*realloc(void *ptr, size_t size);
@@ -32,6 +33,7 @@ typedef struct		s_chunk_types
 	t_chunk			*large;
 }					t_chunk_types;
 
+t_chunk				*get_chunk(t_chunk_types chunks, void *ptr);
 t_chunk				*init_chunks(t_chunk_types *chunks, size_t size);
 
 #endif

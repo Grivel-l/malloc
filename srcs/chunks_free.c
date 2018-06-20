@@ -1,39 +1,38 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   malloc.c                                         .::    .:/ .      .::   */
+/*   chunks_free.c                                    .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/20 08:36:49 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/06/20 08:17:46 by legrivel     #+#   ##    ##    #+#       */
+/*   Updated: 2018/06/20 08:25:12 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-static t_chunk_types	g_chunks = {NULL, NULL, NULL};
-
-void					*malloc(size_t size)
+static t_chunk	*find_chunk(t_chunk *chunks, void *ptr)
 {
-	t_chunk	*chunk;
-
-	if ((chunk = init_chunks(&g_chunks, size)) == NULL)
-		return (NULL);
-	return (chunk + sizeof(t_chunk));
+	while (chunks != NULL)
+	{
+		if (chunks + sizeof(t_chunk) == ptr)
+			return (chunks);
+		chunks = chunks->next;
+	}
+	return (NULL);
 }
 
-void					free(void *ptr)
+t_chunk		*get_chunk(t_chunk_types chunks, void *ptr)
 {
-	t_chunk	*chunk;
+	t_chunk		*chunk;
 
-	if ((chunk = get_chunk(g_chunks, ptr)) != NULL)
-	{
-		chunk->freed = 1;
-		if (munmap(chunk, chunk->size + sizeof(t_chunk)) == -1)
-			printf("Error: %s\n", strerror(errno));
-	}
-	else
-		write(1, "Pointer\n", 8);
+	if ((chunk = find_chunk(chunks.tiny, ptr)) != NULL)
+		return (chunk);
+	else if ((chunk = find_chunk(chunks.small, ptr)) != NULL)
+		return (chunk);
+	else if ((chunk = find_chunk(chunks.large, ptr)) != NULL)
+		return (chunk);
+	return (NULL);
 }
