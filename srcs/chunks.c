@@ -1,5 +1,4 @@
 #include "malloc.h"
-#include <string.h>
 
 static size_t	get_chunk_size(size_t size)
 {
@@ -16,11 +15,16 @@ static size_t	get_chunk_size(size_t size)
 
 static t_chunk	*create_chunk(t_chunk **chunk, size_t size)
 {
-	if ((*chunk = mmap(NULL, get_chunk_size(size),
+	size_t	chunk_size;
+
+	chunk_size = get_chunk_size(size);
+	if ((*chunk = mmap(NULL, chunk_size,
 		PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		return (NULL);
 	(*chunk)->next = NULL;
+	printf("Creating chunk of: %zu...%p, %p\n", get_chunk_size(size), *chunk, (*chunk)->next);
 	(*chunk)->size = size;
+	(*chunk)->chunk_size = chunk_size;
 	(*chunk)->freed = 0;
 	return (*chunk);
 }
@@ -41,6 +45,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 		limit = getpagesize() * LARGE_M;
 	else
 		limit = 0;
+	printf("Getting last chunk... %p\n", *chunk);
 	while (*chunk != NULL && (*chunk)->next != NULL)
 	{
 		if (limit != 0)
@@ -64,6 +69,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 	next->freed = 0;
 	next->size = size;
 	next->next = NULL;
+	next->chunk_size = 0;
 	return (next);
 }
 
