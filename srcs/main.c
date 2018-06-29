@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/29 18:12:08 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/06/29 23:24:24 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -30,6 +30,7 @@ void					free(void *ptr)
 
 	if (get_chunk(&chunk, &g_chunks, ptr) != NULL)
 	{
+		chunk.chunk->freed = 1;
 		if (chunk.freeable)
 			free_pointer(&g_chunks, chunk);
 	}
@@ -43,9 +44,9 @@ void					*realloc(void *ptr, size_t size)
 
 	if (get_chunk(&chunk, &g_chunks, ptr) != NULL)
 	{
-		
+		realloc_chunk(&g_chunks, chunk, ptr, size);
 	}
 	else
-		write(1, "Pointer\n", 18);
+		write(1, "Pointer not found\n", 18);
 	return (NULL);
 }

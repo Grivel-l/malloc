@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/20 08:17:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/29 18:53:52 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/06/29 23:24:28 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,12 +28,10 @@ static void		find_chunk(t_chunk_find *chunk, t_chunk	*chunks, void *ptr)
 			chunk_start = chunks;
 		}
 		if ((void *)chunks + sizeof(t_chunk) == ptr)
-		{
-			chunks->freed = 1;
 			chunk->chunk = chunk_start;
-		}
-		if (!chunks->freed)
-			chunk->freeable = 0;
+		else
+			if (!chunks->freed)
+				chunk->freeable = 0;
 		chunk->previous = chunks;
 		chunks = chunks->next;
 		if (chunks != NULL && chunks->chunk_size != 0)

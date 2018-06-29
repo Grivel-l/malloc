@@ -8,6 +8,7 @@
 # include <sys/mman.h>
 # include <errno.h>
 # include <string.h>
+# include "../libft/libft.h"
 
 void		free(void *ptr);
 // void		show_alloc_mem(void);
@@ -44,7 +45,8 @@ typedef struct		s_chunk_find
 
 t_chunk				*init_chunks(t_chunk_types *chunks, size_t size);
 void				free_pointer(t_chunk_types *chunks, t_chunk_find chunk);
+void				*realloc_chunk(t_chunk_types *chunks,
+								t_chunk_find chunk, void *ptr, size_t size);
 t_chunk_find		*get_chunk(t_chunk_find *chunk, t_chunk_types *chunks, void *ptr);
-void				*realloc_chunk(t
 
 #endif
