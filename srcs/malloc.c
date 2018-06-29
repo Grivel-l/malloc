@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/26 01:07:49 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/06/29 17:32:51 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,7 +21,7 @@ void					*malloc(size_t size)
 
 	if ((chunk = init_chunks(&g_chunks, size)) == NULL)
 		return (NULL);
-	return (chunk + sizeof(t_chunk));
+	return ((void *)chunk + sizeof(t_chunk));
 }
 
 void					free(void *ptr)
@@ -34,5 +34,8 @@ void					free(void *ptr)
 			free_pointer(&g_chunks, chunk);
 	}
 	else
+	{
+		write(1, strerror(errno), strlen(strerror(errno)));
 		write(1, "Pointer\n", 8);
+	}
 }

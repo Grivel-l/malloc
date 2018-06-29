@@ -19,10 +19,9 @@ static t_chunk	*create_chunk(t_chunk **chunk, size_t size)
 
 	chunk_size = get_chunk_size(size);
 	if ((*chunk = mmap(NULL, chunk_size,
-		PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
+		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
 		return (NULL);
 	(*chunk)->next = NULL;
-	printf("Creating chunk of: %zu...%p, %p\n", get_chunk_size(size), *chunk, (*chunk)->next);
 	(*chunk)->size = size;
 	(*chunk)->chunk_size = chunk_size;
 	(*chunk)->freed = 0;
@@ -35,7 +34,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 	size_t	total_size;
 	t_chunk	*pointer;
 	t_chunk	*next;
-	char	*yo;
+	void	*yo;
 
 	pointer = *chunk;
 	total_size = 0;
@@ -45,7 +44,6 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 		limit = getpagesize() * LARGE_M;
 	else
 		limit = 0;
-	printf("Getting last chunk... %p\n", *chunk);
 	while (*chunk != NULL && (*chunk)->next != NULL)
 	{
 		if (limit != 0)
@@ -61,7 +59,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 			*chunk = pointer;
 		return (pointer == NULL ? *chunk : next);
 	}
-	yo = (char *)*chunk;
+	yo = (void *)*chunk;
 	yo = yo + sizeof(t_chunk) + (*chunk)->size;
 	(*chunk)->next = (t_chunk *)yo;
 	next = (*chunk)->next;
