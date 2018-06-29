@@ -1,41 +1,86 @@
-/* ************************************************************************** */
-/*                                                          LE - /            */
-/*                                                              /             */
-/*   malloc.c                                         .::    .:/ .      .::   */
-/*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
-/*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/29 17:32:51 by legrivel    ###    #+. /#+    ###.fr     */
-/*                                                         /                  */
-/*                                                        /                   */
-/* ************************************************************************** */
-
 #include "malloc.h"
 
-static t_chunk_types	g_chunks = {NULL, NULL, NULL};
-
-void					*malloc(size_t size)
+static size_t	get_chunk_size(size_t size)
 {
-	t_chunk	*chunk;
+	size_t	page_size;
+	size_t	total_size;
 
-	if ((chunk = init_chunks(&g_chunks, size)) == NULL)
-		return (NULL);
-	return ((void *)chunk + sizeof(t_chunk));
+	size += sizeof(t_chunk);
+	page_size = getpagesize();
+	total_size = page_size;
+	while (total_size < size)
+		total_size += page_size;
+	return (total_size);
 }
 
-void					free(void *ptr)
+static t_chunk	*create_chunk(t_chunk **chunk, size_t size)
 {
-	t_chunk_free	chunk;
+	size_t	chunk_size;
 
-	if (get_chunk(&chunk, &g_chunks, ptr) != NULL)
-	{
-		if (chunk.freeable)
-			free_pointer(&g_chunks, chunk);
-	}
+	chunk_size = get_chunk_size(size);
+	if ((*chunk = mmap(NULL, chunk_size,
+		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
+		return (NULL);
+	(*chunk)->next = NULL;
+	(*chunk)->size = size;
+	(*chunk)->chunk_size = chunk_size;
+	(*chunk)->freed = 0;
+	return (*chunk);
+}
+
+static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
+{
+	size_t	limit;
+	size_t	total_size;
+	t_chunk	*pointer;
+	t_chunk	*next;
+	void	*yo;
+
+	pointer = *chunk;
+	total_size = 0;
+	if (type == TINY)
+		limit = getpagesize() * TINY_M;
+	else if (type != TINY && type != LARGE)
+		limit = getpagesize() * LARGE_M;
 	else
+		limit = 0;
+	while (*chunk != NULL && (*chunk)->next != NULL)
 	{
-		write(1, strerror(errno), strlen(strerror(errno)));
-		write(1, "Pointer\n", 8);
+		if (limit != 0)
+			total_size += (*chunk)->size + sizeof(t_chunk);
+		*chunk = (*chunk)->next;
 	}
+	if (limit == 0 || total_size + size + sizeof(t_chunk) > limit)
+	{
+		if (create_chunk(*chunk == NULL ? chunk : &((*chunk)->next), size) == NULL)
+			return (NULL);
+		next = (*chunk)->next;
+		if (pointer != NULL)
+			*chunk = pointer;
+		return (pointer == NULL ? *chunk : next);
+	}
+	yo = (void *)*chunk;
+	yo = yo + sizeof(t_chunk) + (*chunk)->size;
+	(*chunk)->next = (t_chunk *)yo;
+	next = (*chunk)->next;
+	*chunk = pointer;
+	next->freed = 0;
+	next->size = size;
+	next->next = NULL;
+	next->chunk_size = 0;
+	return (next);
+}
+
+t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
+{
+	if (size <= TINY && chunks->tiny == NULL)
+		return (create_chunk(&(chunks->tiny), size));
+	else if (size <= TINY && chunks->tiny != NULL)
+		return (get_last_chunk(&(chunks->tiny), size, TINY));
+	else if (size > TINY && size < LARGE && chunks->small == NULL)
+		return (create_chunk(&(chunks->small), size));
+	else if (size > TINY && size < LARGE && chunks->small != NULL)
+		return (get_last_chunk(&(chunks->small), size, 0));
+	else
+		return (get_last_chunk(&(chunks->large), size, LARGE));
 }
