@@ -28,6 +28,8 @@ void					free2(void *ptr)
 {
 	t_chunk_find	chunk;
 
+	if (ptr == NULL)
+		return ;
 	if (get_chunk(&chunk, &g_chunks, ptr) != NULL)
 	{
 		chunk.chunk->freed = 1;
