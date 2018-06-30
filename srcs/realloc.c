@@ -19,7 +19,8 @@ static void 	*expand_chunk(t_chunk_find chunk, t_chunk_types *chunks, size_t siz
 
 	if ((pointer = init_chunks(chunks, size)) == NULL)
 		return (NULL);
-	ft_memcpy(pointer + sizeof(t_chunk), (void *)(chunk.chunk) + sizeof(t_chunk), chunk.chunk->size);
+	pointer = (void *)pointer + sizeof(t_chunk);
+	ft_memcpy(pointer, (void *)(chunk.chunk) + sizeof(t_chunk), chunk.chunk->size);
 	chunk.chunk->freed = 1;
 	free_pointer(chunks, chunk);
 	return (pointer);
@@ -38,14 +39,14 @@ void			*realloc_chunk(t_chunk_types *chunks,
 	{
 		if ((void *)pointer + sizeof(t_chunk) == ptr)
 			match = pointer;
-		chunk_size += pointer->size;
+		chunk_size += pointer->size + sizeof(t_chunk);
 		pointer = pointer->next;
 	}
 	if (match->next == NULL &&
-		chunk_size + sizeof(t_chunk) + size > chunk.chunk->chunk_size)
+chunk.chunk->chunk_size - chunk_size + match->size >= size)
 		chunk.chunk->size = size;
 	else
 		return (expand_chunk(chunk, chunks, size));
-	return (chunk.chunk);
+	return ((void *)(chunk.chunk) + sizeof(t_chunk));
 }
 

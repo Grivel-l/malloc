@@ -15,7 +15,7 @@
 
 static t_chunk_types	g_chunks = {NULL, NULL, NULL};
 
-void					*malloc(size_t size)
+void					*malloc2(size_t size)
 {
 	t_chunk	*chunk;
 
@@ -24,7 +24,7 @@ void					*malloc(size_t size)
 	return ((void *)chunk + sizeof(t_chunk));
 }
 
-void					free(void *ptr)
+void					free2(void *ptr)
 {
 	t_chunk_find	chunk;
 
@@ -38,14 +38,12 @@ void					free(void *ptr)
 		write(1, "Pointer not found\n", 18);
 }
 
-void					*realloc(void *ptr, size_t size)
+void					*realloc2(void *ptr, size_t size)
 {
 	t_chunk_find	chunk;
 
 	if (get_chunk(&chunk, &g_chunks, ptr) != NULL)
-	{
-		realloc_chunk(&g_chunks, chunk, ptr, size);
-	}
+		return (realloc_chunk(&g_chunks, chunk, ptr, size));
 	else
 		write(1, "Pointer not found\n", 18);
 	return (NULL);
