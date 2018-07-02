@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/29 23:24:24 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/02 13:42:13 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 static t_chunk_types	g_chunks = {NULL, NULL, NULL};
 
-void					*malloc2(size_t size)
+void					*malloc(size_t size)
 {
 	t_chunk	*chunk;
 
@@ -24,7 +24,7 @@ void					*malloc2(size_t size)
 	return ((void *)chunk + sizeof(t_chunk));
 }
 
-void					free2(void *ptr)
+void					free(void *ptr)
 {
 	t_chunk_find	chunk;
 
@@ -40,7 +40,7 @@ void					free2(void *ptr)
 		write(1, "Pointer not found\n", 18);
 }
 
-void					*realloc2(void *ptr, size_t size)
+void					*realloc(void *ptr, size_t size)
 {
 	t_chunk_find	chunk;
 

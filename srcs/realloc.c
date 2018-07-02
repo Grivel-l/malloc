@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/29 18:47:18 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/29 23:35:02 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/02 15:06:04 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -23,7 +23,7 @@ static void 	*expand_chunk(t_chunk_find chunk, t_chunk_types *chunks, size_t siz
 		return (NULL);
 	pointer = (void *)pointer + sizeof(t_chunk);
 	ft_memcpy(pointer, chunk_copy + sizeof(t_chunk), chunk.chunk->size);
-	free2(chunk_copy + sizeof(t_chunk));
+	free(chunk_copy + sizeof(t_chunk));
 	return (pointer);
 }
 
@@ -45,9 +45,9 @@ void			*realloc_chunk(t_chunk_types *chunks,
 	}
 	if (match->next == NULL &&
 chunk.chunk->chunk_size - chunk_size + match->size >= size)
-		chunk.chunk->size = size;
+		match->size = size;
 	else
 		return (expand_chunk(chunk, chunks, size));
-	return ((void *)(chunk.chunk) + sizeof(t_chunk));
+	return ((void *)match + sizeof(t_chunk));
 }
 

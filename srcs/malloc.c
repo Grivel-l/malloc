@@ -21,7 +21,6 @@ static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type)
 {
 	size_t	chunk_size;
 
-	dprintf(1, "Mapping...\n");
 	chunk_size = get_chunk_size(size, type);
 	if ((*chunk = mmap(NULL, chunk_size,
 		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
