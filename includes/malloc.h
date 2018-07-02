@@ -43,6 +43,7 @@ typedef struct		s_chunk_find
 	size_t			freeable;
 }					t_chunk_find;
 
+void				print_alloc_mem(t_chunk_types *chunks);
 t_chunk				*init_chunks(t_chunk_types *chunks, size_t size);
 void				free_pointer(t_chunk_types *chunks, t_chunk_find chunk);
 void				*realloc_chunk(t_chunk_types *chunks,

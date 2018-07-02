@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/07/02 13:42:13 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/02 19:14:46 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -53,5 +53,19 @@ void					*realloc(void *ptr, size_t size)
 
 void					show_alloc_mem(void)
 {
-	
+	t_chunk_types	chunks;
+
+	chunks.tiny = g_chunks.tiny;
+	chunks.small = g_chunks.small;
+	chunks.large = g_chunks.large;
+	while (1)
+	{
+		dprintf(1, "HelloWorld\n");
+		print_alloc_mem(&chunks);
+		/*chunks.tiny = chunks.tiny == NULL ? NULL : chunks.tiny->next;
+		chunks.small = chunks.small == NULL ? NULL : chunks.small->next;
+		chunks.large = chunks.large == NULL ? NULL : chunks.large->next;*/
+		if (chunks.tiny == NULL && chunks.small == NULL && chunks.large == NULL)
+			break ;
+	}
 }
