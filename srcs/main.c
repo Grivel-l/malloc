@@ -50,3 +50,8 @@ void					*realloc2(void *ptr, size_t size)
 		write(1, "Pointer not found\n", 18);
 	return (NULL);
 }
+
+void					show_alloc_mem(void)
+{
+	
+}

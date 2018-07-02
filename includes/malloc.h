@@ -11,14 +11,14 @@
 # include "../libft/libft.h"
 
 void		free2(void *ptr);
-// void		show_alloc_mem(void);
+void		show_alloc_mem(void);
 void		*malloc2(size_t size);
 void		*realloc2(void *ptr, size_t size);
 
 # define TINY 128
 # define TINY_M 1
 # define LARGE 131072
-# define LARGE_M 8
+# define SMALL_M 8
 
 typedef struct		s_chunk
 {

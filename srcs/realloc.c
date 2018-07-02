@@ -16,13 +16,14 @@
 static void 	*expand_chunk(t_chunk_find chunk, t_chunk_types *chunks, size_t size)
 {
 	void	*pointer;
+	void	*chunk_copy;
 
+	chunk_copy = (void *)(chunk.chunk);
 	if ((pointer = init_chunks(chunks, size)) == NULL)
 		return (NULL);
 	pointer = (void *)pointer + sizeof(t_chunk);
-	ft_memcpy(pointer, (void *)(chunk.chunk) + sizeof(t_chunk), chunk.chunk->size);
-	chunk.chunk->freed = 1;
-	free_pointer(chunks, chunk);
+	ft_memcpy(pointer, chunk_copy + sizeof(t_chunk), chunk.chunk->size);
+	free2(chunk_copy + sizeof(t_chunk));
 	return (pointer);
 }
 

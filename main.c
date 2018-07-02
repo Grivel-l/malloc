@@ -11,40 +11,29 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include <errno.h>
-#include <string.h>
 #include "malloc.h"
 
 int		main(void)
 {
 	char	*str;
 	char	*str2;
-	/*str = malloc(1);
-	str = str - 1 - sizeof(t_chunk);
-	((t_chunk *)str)->next = ((t_chunk *)str) + sizeof(t_chunk) + 1;
-	((t_chunk *)str)->next->next = ((t_chunk *)str)->next + sizeof(t_chunk) + 1;
-	printf("HelloWorld\n");
-	return (0);*/
-	str2 = malloc(135);
-	memset(str2, 'A', 134);
-	str2[134] = '\0';
 
-	/*str = malloc(100);
-	memset(str, 'B', 99);
-	str[99] = '\0';
-	free(str);*/
-
-	str = malloc(130);
-	memset(str, 'C', 129);
-	str[129] = '\0';
-	free(str);
-	printf("Hey\n");
-	free(str2);
-
-	/*str = malloc(131072);
-	memset(str, 'D', 131071);
-	str[131071] = '\0';
-	free(str);*/
-
+	dprintf(1, "Sizeof: %zu\n", sizeof(t_chunk));
+	str = malloc2(50);
+	memset(str, 'D', 49);
+	str[49] = '\0';
+	dprintf(1, "Str: %p\n", str);
+	str2 = malloc2(37);
+	memset(str2, 'E', 36);
+	str2[36] = '\0';
+	dprintf(1, "Str2: %p\n", str2);
+	str = realloc2(str, 55);
+	dprintf(1, "HelloWorld\n");
+	dprintf(1, "Str: %s\n", str);
+	memset(str + 49, 'A', 5);
+	str[54] = '\0';
+	printf("Str: %s\n", str);
+ 	free2(str);
+	free2(str2);
 	return (0);
 }
