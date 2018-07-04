@@ -80,7 +80,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 		tmp = *chunk;
 		*chunk = (*chunk)->next;
 	}
-	if ((tmp->next = create_chunk(*chunk == NULL ? chunk : &((*chunk)->next), size, type)) == NULL)
+	if ((tmp->next = create_chunk(chunk, size, type)) == NULL)
 		return (NULL);
 	if (pointer != NULL)
 		*chunk = pointer;
