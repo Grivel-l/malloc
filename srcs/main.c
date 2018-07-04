@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/17 23:31:46 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/07/04 15:26:03 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/04 15:35:18 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -53,197 +53,6 @@ void					*realloc(void *ptr, size_t size)
 
 void					show_alloc_mem(void)
 {
-	/*printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	printf("Size: %zu\n", g_chunks.tiny->size);
-	g_chunks.tiny = g_chunks.tiny->next;
-	if (g_chunks.tiny == NULL)
-		return ;
-	return ;*/
 	t_chunk_types	chunks;
 
 	chunks.tiny = g_chunks.tiny;
@@ -252,9 +61,6 @@ void					show_alloc_mem(void)
 	while (1)
 	{
 		print_alloc_mem(&chunks);
-		/*chunks.tiny = chunks.tiny == NULL ? NULL : chunks.tiny->next;
-		chunks.small = chunks.small == NULL ? NULL : chunks.small->next;
-		chunks.large = chunks.large == NULL ? NULL : chunks.large->next;*/
 		if (chunks.tiny == NULL && chunks.small == NULL && chunks.large == NULL)
 			break ;
 	}
