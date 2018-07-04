@@ -21,7 +21,6 @@ static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type)
 {
 	size_t	chunk_size;
 
-	dprintf(1, "Mmaping...\n");
 	chunk_size = get_chunk_size(size, type);
 	if ((*chunk = mmap(NULL, chunk_size,
 		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
@@ -80,11 +79,13 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 		tmp = *chunk;
 		*chunk = (*chunk)->next;
 	}
-	if ((tmp->next = create_chunk(chunk, size, type)) == NULL)
+	if (pointer == NULL && (tmp = create_chunk(chunk, size, type) == NULL))
+		return (NULL);
+	else if (pointer != NULL && (tmp->next = create_chunk(chunk, size, type)) == NULL)
 		return (NULL);
 	if (pointer != NULL)
 		*chunk = pointer;
-	return (tmp->next);
+	return (pointer == NULL ? tmp : tmp->next);
 }
 
 t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
@@ -98,5 +99,8 @@ t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
 	else if (size > TINY && size < LARGE && chunks->small != NULL)
 		return (get_last_chunk(&(chunks->small), size, 0));
 	else
+	{
+		dprintf(1, "Creating large\n");
 		return (get_last_chunk(&(chunks->large), size, LARGE));
+	}
 }
