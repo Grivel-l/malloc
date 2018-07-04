@@ -21,6 +21,7 @@ static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type)
 {
 	size_t	chunk_size;
 
+	dprintf(1, "Mmaping...\n");
 	chunk_size = get_chunk_size(size, type);
 	if ((*chunk = mmap(NULL, chunk_size,
 		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
@@ -37,7 +38,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 	size_t	limit;
 	size_t	total_size;
 	t_chunk	*pointer;
-	t_chunk	*next;
+	t_chunk	*tmp;
 	void	*yo;
 
 	pointer = *chunk;
@@ -58,42 +59,32 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 					yo = (void *)*chunk;
 					yo = yo + sizeof(t_chunk) + (*chunk)->size;
 					(*chunk)->next = (t_chunk *)yo;
-					next = (*chunk)->next;
+					tmp = (*chunk)->next;
 					*chunk = pointer;
-					next->freed = 0;
-					next->size = size;
-					next->next = NULL;
-					next->chunk_size = 0;
-					return (next);
+					tmp->freed = 0;
+					tmp->size = size;
+					tmp->next = NULL;
+					tmp->chunk_size = 0;
+					return (tmp);
 				}
 			}
 			else if ((*chunk)->next != NULL && (*chunk)->next->chunk_size != 0)
 			{
-				if (total_size + size + sizeof(t_chunk) <= limit)
-				{
-					yo = (void *)*chunk;
-					yo = yo + sizeof(t_chunk) + (*chunk)->size;
-					next = (*chunk)->next;
-					(*chunk)->next = (t_chunk *)yo;
-					(*chunk)->next->next = next;
-					next = (*chunk)->next;
-					*chunk = pointer;
-					next->freed = 0;
-					next->size = size;
-					next->next = NULL;
-					next->chunk_size = 0;
-					return (next);
-				}
+				*chunk = (*chunk)->next;
+				if ((tmp = get_last_chunk(chunk, size, type)) == NULL)
+					return (NULL);
+				*chunk = pointer;
+				return (tmp);
 			}
 		}
+		tmp = *chunk;
 		*chunk = (*chunk)->next;
 	}
-	if (create_chunk(*chunk == NULL ? chunk : &((*chunk)->next), size, type) == NULL)
+	if ((tmp->next = create_chunk(*chunk == NULL ? chunk : &((*chunk)->next), size, type)) == NULL)
 		return (NULL);
-	next = (*chunk)->next;
 	if (pointer != NULL)
 		*chunk = pointer;
-	return (pointer == NULL ? *chunk : next);
+	return (tmp->next);
 }
 
 t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)

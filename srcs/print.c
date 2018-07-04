@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/07/02 15:26:51 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/07/02 19:14:30 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/03 19:08:54 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -36,7 +36,7 @@ static size_t	print_chunk(t_chunk **chunk, size_t type)
 		print_address(pointer);
 		ft_putchar('\n');
 	}
-	if ((*chunk)->next == NULL || (*chunk)->next != NULL && (*chunk)->next->chunk_size != 0)
+	if ((*chunk)->next == NULL || ((*chunk)->next != NULL && (*chunk)->next->chunk_size != 0))
 		old_type = -1;
 	print_address(pointer + sizeof(t_chunk));
 	ft_putstr(" - ");
