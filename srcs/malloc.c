@@ -99,8 +99,5 @@ t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
 	else if (size > TINY && size < LARGE && chunks->small != NULL)
 		return (get_last_chunk(&(chunks->small), size, 0));
 	else
-	{
-		dprintf(1, "Creating large\n");
 		return (get_last_chunk(&(chunks->large), size, LARGE));
-	}
 }

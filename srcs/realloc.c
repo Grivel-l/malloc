@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/29 18:47:18 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2018/07/02 15:06:04 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/07/05 15:21:34 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -45,7 +45,10 @@ void			*realloc_chunk(t_chunk_types *chunks,
 	}
 	if (match->next == NULL &&
 chunk.chunk->chunk_size - chunk_size + match->size >= size)
+	{
+		match->freed = 0;
 		match->size = size;
+	}
 	else
 		return (expand_chunk(chunk, chunks, size));
 	return ((void *)match + sizeof(t_chunk));
