@@ -22,7 +22,12 @@ static size_t	print_chunk(t_chunk **chunk, size_t type)
 {
 	void			*pointer;
 	static size_t	old_type = -1;
-
+	
+	if ((*chunk)->freed)
+	{
+		*chunk = (*chunk)->next;
+		return (1);
+	}
 	pointer = (void *)(*chunk);
 	if (old_type != type)
 	{
