@@ -1,15 +1,11 @@
 #include "malloc.h"
 
-static size_t	get_chunk_size(size_t size, size_t type)
+static size_t	get_chunk_size(size_t size, size_t type, size_t page_size)
 {
-	size_t	page_size;
 	size_t	total_size;
 
-	page_size = getpagesize();
-	if (type == TINY)
-		return (page_size * TINY_M);
-	else if (type == 0)
-		return (page_size * SMALL_M);
+	if (type == TINY_M || type == SMALL_M)
+		return (page_size * type);
 	size += sizeof(t_chunk);
 	total_size = page_size;
 	while (total_size < size)
@@ -17,11 +13,11 @@ static size_t	get_chunk_size(size_t size, size_t type)
 	return (total_size);
 }
 
-static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type)
+static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type, size_t page_size)
 {
 	size_t	chunk_size;
 
-	chunk_size = get_chunk_size(size, type);
+	chunk_size = get_chunk_size(size, type, page_size);
 	if ((*chunk = mmap(NULL, chunk_size,
 		PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
 		return (NULL);
@@ -32,7 +28,7 @@ static t_chunk	*create_chunk(t_chunk **chunk, size_t size, size_t type)
 	return (*chunk);
 }
 
-static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
+static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type, size_t page_size)
 {
 	size_t	limit;
 	size_t	total_size;
@@ -43,7 +39,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 	pointer = *chunk;
 	while (*chunk != NULL)
 	{
-		if (type != LARGE)
+		if (type != 0)
 		{
 			if ((*chunk)->chunk_size != 0)
 			{
@@ -70,7 +66,7 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 			else if ((*chunk)->next != NULL && (*chunk)->next->chunk_size != 0)
 			{
 				*chunk = (*chunk)->next;
-				if ((tmp = get_last_chunk(chunk, size, type)) == NULL)
+				if ((tmp = get_last_chunk(chunk, size, type, page_size)) == NULL)
 					return (NULL);
 				*chunk = pointer;
 				return (tmp);
@@ -79,9 +75,9 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 		tmp = *chunk;
 		*chunk = (*chunk)->next;
 	}
-	if (pointer == NULL && (tmp = create_chunk(chunk, size, type)) == NULL)
+	if (pointer == NULL && (tmp = create_chunk(chunk, size, type, page_size)) == NULL)
 		return (NULL);
-	else if (pointer != NULL && (tmp->next = create_chunk(chunk, size, type)) == NULL)
+	else if (pointer != NULL && (tmp->next = create_chunk(chunk, size, type, page_size)) == NULL)
 		return (NULL);
 	if (pointer != NULL)
 		*chunk = pointer;
@@ -90,14 +86,21 @@ static t_chunk	*get_last_chunk(t_chunk **chunk, size_t size, size_t type)
 
 t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
 {
-	if (size <= TINY && chunks->tiny == NULL)
-		return (create_chunk(&(chunks->tiny), size, TINY));
-	else if (size <= TINY && chunks->tiny != NULL)
-		return (get_last_chunk(&(chunks->tiny), size, TINY));
-	else if (size > TINY && size < LARGE && chunks->small == NULL)
-		return (create_chunk(&(chunks->small), size, 0));
-	else if (size > TINY && size < LARGE && chunks->small != NULL)
-		return (get_last_chunk(&(chunks->small), size, 0));
+	size_t	tiny;
+	size_t	large;
+	size_t	page_size;
+
+	page_size = getpagesize();
+	tiny = page_size * TINY_M / 32;
+	large = page_size * SMALL_M / 32;
+	if (size <= tiny && chunks->tiny == NULL)
+		return (create_chunk(&(chunks->tiny), size, TINY_M, page_size));
+	else if (size <= tiny && chunks->tiny != NULL)
+		return (get_last_chunk(&(chunks->tiny), size, TINY_M, page_size));
+	else if (size > tiny && size < large && chunks->small == NULL)
+		return (create_chunk(&(chunks->small), size, SMALL_M, page_size));
+	else if (size > tiny && size < large && chunks->small != NULL)
+		return (get_last_chunk(&(chunks->small), size, SMALL_M, page_size));
 	else
-		return (get_last_chunk(&(chunks->large), size, LARGE));
+		return (get_last_chunk(&(chunks->large), size, 0, page_size));
 }

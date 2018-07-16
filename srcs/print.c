@@ -32,7 +32,7 @@ static size_t	print_chunk(t_chunk **chunk, size_t type)
 	if (old_type != type)
 	{
 		old_type = type;
-		if (type == TINY)
+		if (type == TINY_M)
 			ft_putstr("TINY : ");
 		else if (type == 0)
 			ft_putstr("SMALL : ");
@@ -84,7 +84,7 @@ static size_t	print_asc(t_chunk **chunk, t_chunk **chunk2, t_chunk **chunk3, siz
 
 void			print_alloc_mem(t_chunk_types *chunks)
 {
-	if (print_asc(&(chunks->tiny), &(chunks->small), &(chunks->large), TINY) == 0)
+	if (print_asc(&(chunks->tiny), &(chunks->small), &(chunks->large), TINY_M) == 0)
 		if (print_asc(&(chunks->small), &(chunks->tiny), &(chunks->large), 0) == 0)
-			print_asc(&(chunks->large), &(chunks->small), &(chunks->tiny), LARGE);
+			print_asc(&(chunks->large), &(chunks->small), &(chunks->tiny), SMALL_M);
 }
