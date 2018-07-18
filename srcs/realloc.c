@@ -23,7 +23,7 @@ static void 	*expand_chunk(t_chunk_find chunk, t_chunk_types *chunks, size_t siz
 		return (NULL);
 	pointer = (void *)pointer + sizeof(t_chunk);
 	ft_memcpy(pointer, chunk_copy + sizeof(t_chunk), chunk.chunk->size);
-	free2(chunk_copy + sizeof(t_chunk));
+	free(chunk_copy + sizeof(t_chunk));
 	return (pointer);
 }
 
