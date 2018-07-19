@@ -35,7 +35,8 @@ static void		find_chunk(t_chunk_find *chunk, t_chunk	*chunks, void *ptr)
 		else
 			if (!chunks->freed)
 				chunk->freeable = 0;
-		if (chunk->chunk == NULL)
+		if (chunk->chunk == NULL &&
+	chunks->next != NULL && chunks->next->chunk_size != 0)
 			chunk->previous = chunks;
 		chunks = chunks->next;
 		if (chunks != NULL && chunks->chunk_size != 0)

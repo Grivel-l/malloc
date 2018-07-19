@@ -91,15 +91,15 @@ t_chunk			*init_chunks(t_chunk_types *chunks, size_t size)
 	size_t	page_size;
 
 	page_size = getpagesize();
-	tiny = page_size * TINY_M / 32;
-	large = page_size * SMALL_M / 32;
+	tiny = page_size * TINY_M / DIVIDER;
+	large = page_size * SMALL_M / DIVIDER;
 	if (size <= tiny && chunks->tiny == NULL)
 		return (create_chunk(&(chunks->tiny), size, TINY_M, page_size));
 	else if (size <= tiny && chunks->tiny != NULL)
 		return (get_last_chunk(&(chunks->tiny), size, TINY_M, page_size));
-	else if (size > tiny && size < large && chunks->small == NULL)
+	else if (size > tiny && size <= large && chunks->small == NULL)
 		return (create_chunk(&(chunks->small), size, SMALL_M, page_size));
-	else if (size > tiny && size < large && chunks->small != NULL)
+	else if (size > tiny && size <= large && chunks->small != NULL)
 		return (get_last_chunk(&(chunks->small), size, SMALL_M, page_size));
 	else
 		return (get_last_chunk(&(chunks->large), size, 0, page_size));
