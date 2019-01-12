@@ -23,13 +23,14 @@
 # include <string.h>
 # include "../libft/libft.h"
 
-void		free2(void *ptr);
+void		free(void *ptr);
 void		show_alloc_mem(void);
-void		*malloc2(size_t size);
-void		*realloc2(void *ptr, size_t size);
+void		*malloc(size_t size);
+void		*realloc(void *ptr, size_t size);
 
 # define TINY_M 1
 # define SMALL_M 8
+# define DIVIDER 32
 
 typedef struct		s_chunk
 {
