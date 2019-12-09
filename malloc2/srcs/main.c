@@ -50,16 +50,17 @@ t_chunk   *get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
     total = 0;
     while (chunk->next != NULL)
     {
+      if (total + chunk->size + sizeof(t_chunk) > chunk_size &&
+        total + size + sizeof(t_chunk) < chunk_size)
+        return (append_chunk(chunk, size));
       total += chunk->size + sizeof(t_chunk);
       if (total > chunk_size)
         total = chunk->size + sizeof(t_chunk);
-      if (total + ((t_chunk *)chunk->next)->size > chunk_size && total + size + sizeof(t_chunk) < chunk_size)
-        return (append_chunk(chunk, size));
       chunk = chunk->next;
     }
-    if (total + size + sizeof(t_chunk) <= chunk_size)
+    if (total + size + sizeof(t_chunk) * 2 + chunk->size <= chunk_size)
       return (append_chunk(chunk, size));
-    if ((new_chunk = create_chunk(chunk->next, size, chunk_size)) == NULL)
+    if ((new_chunk = create_chunk((t_chunk **)(&(chunk->next)), size, chunk_size)) == NULL)
       return (NULL);
     chunk->next = new_chunk;
     return (new_chunk);
@@ -97,6 +98,7 @@ t_chunk			*init_chunks(size_t size)
 
 void    *malloc(size_t size)
 {
+    dprintf(1, "Malloc\n");
     return (init_chunks(size));
 }
 
