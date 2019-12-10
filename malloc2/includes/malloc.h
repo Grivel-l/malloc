@@ -11,6 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include "../../libft/libft.h"
@@ -26,3 +27,5 @@ typedef struct s_chunk
 }             t_chunk;
 
 void    *malloc(size_t size);
+
+void    print_alloc_mem(t_chunk *g_chunks[3]);

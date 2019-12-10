@@ -11,7 +11,6 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "malloc.h"
 
 static t_chunk *(g_chunks[3]) = {NULL, NULL, NULL};
@@ -70,10 +69,12 @@ t_chunk   *big_chunk(t_chunk **chunk, size_t size)
 {
     t_chunk *tmp;
 
+    if (*chunk == NULL)
+      return (create_chunk(chunk, size, get_chunk_size(size, getpagesize())));
     tmp = *chunk;
-    while (tmp != NULL)
+    while (tmp->next != NULL)
       tmp = tmp->next;
-    return (create_chunk(&tmp, size, get_chunk_size(size, getpagesize())));
+    return (create_chunk(((t_chunk **)(&(tmp->next))), size, get_chunk_size(size, getpagesize())));
 }
 
 t_chunk			*init_chunks(size_t size)
@@ -98,7 +99,11 @@ t_chunk			*init_chunks(size_t size)
 
 void    *malloc(size_t size)
 {
-    dprintf(1, "Malloc\n");
     return (init_chunks(size));
+}
+
+void    show_alloc_mem(void)
+{
+    print_alloc_mem(g_chunks);
 }
 
