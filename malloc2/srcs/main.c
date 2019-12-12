@@ -44,24 +44,26 @@ t_chunk   *append_chunk(t_chunk *chunk, size_t size)
 t_chunk   *get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 {
     size_t  total;
+    t_chunk *previous;
     t_chunk *new_chunk;
 
     total = 0;
+    previous = NULL;
     while (chunk->next != NULL)
     {
       if (total + chunk->size + sizeof(t_chunk) > chunk_size &&
-        total + size + sizeof(t_chunk) < chunk_size)
-        return (append_chunk(chunk, size));
+        total + size + sizeof(t_chunk) <= chunk_size)
+        return (append_chunk(previous, size));
       total += chunk->size + sizeof(t_chunk);
       if (total > chunk_size)
         total = chunk->size + sizeof(t_chunk);
+      previous = chunk;
       chunk = chunk->next;
     }
     if (total + size + sizeof(t_chunk) * 2 + chunk->size <= chunk_size)
       return (append_chunk(chunk, size));
     if ((new_chunk = create_chunk((t_chunk **)(&(chunk->next)), size, chunk_size)) == NULL)
       return (NULL);
-    chunk->next = new_chunk;
     return (new_chunk);
 }
 
@@ -163,9 +165,7 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
         tmp = tmp->next;
       }
       if (previous == NULL)
-      {
         *chunks = tmp->next;
-      }
       else
         previous->next = chunk->next;
       munmap(chunk, chunk->size);
