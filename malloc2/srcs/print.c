@@ -59,15 +59,15 @@ void    print_chunks(t_chunk **chunk, int type)
     }
 }
 
-void			print_alloc_mem(t_chunk *chunks[3])
+void			print_alloc_mem(t_chunk *chunks0, t_chunk *chunks1, t_chunk *chunks2)
 {
-    if (chunks[0] == NULL && chunks[1] == NULL && chunks[2] == NULL)
+    if (chunks0 == NULL && chunks1 == NULL && chunks2 == NULL)
       return ;
-    if (chunks[0] != NULL && (chunks[1] == NULL || chunks[0] < chunks[1]) && (chunks[2] == NULL || chunks[0] < chunks[2]))
-      print_chunks(&(chunks[0]), TINY);
-    if (chunks[1] != NULL && (chunks[0] == NULL || chunks[1] < chunks[0]) && (chunks[2] == NULL || chunks[1] < chunks[2]))
-      print_chunks(&(chunks[1]), SMALL);
-    if (chunks[2] != NULL && (chunks[1] == NULL || chunks[2] < chunks[1]) && (chunks[0] == NULL || chunks[2] < chunks[0]))
-      print_chunks(&(chunks[2]), -1);
-    print_alloc_mem(chunks);
+    if (chunks0 != NULL && (chunks1 == NULL || chunks0 < chunks1) && (chunks2 == NULL || chunks0 < chunks2))
+      print_chunks(&chunks0, TINY);
+    if (chunks1 != NULL && (chunks0 == NULL || chunks1 < chunks0) && (chunks2 == NULL || chunks1 < chunks2))
+      print_chunks(&chunks1, SMALL);
+    if (chunks2 != NULL && (chunks1 == NULL || chunks2 < chunks1) && (chunks0 == NULL || chunks2 < chunks0))
+      print_chunks(&chunks2, -1);
+    print_alloc_mem(chunks0, chunks1, chunks2);
 }

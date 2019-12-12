@@ -28,4 +28,4 @@ typedef struct s_chunk
 
 void    *malloc(size_t size);
 
-void    print_alloc_mem(t_chunk *g_chunks[3]);
+void    print_alloc_mem(t_chunk *chunks0, t_chunk *chunks1, t_chunk *chunks2);

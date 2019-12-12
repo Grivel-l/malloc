@@ -20,7 +20,6 @@ size_t    get_chunk_size(size_t size, int page_size) {
 }
 
 t_chunk   *create_chunk(t_chunk **chunk, size_t size, int chunk_size) {
-    dprintf(1, "Mmapping...\n");
     if ((*chunk = mmap(NULL, chunk_size,
   PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
       return (NULL);
@@ -98,7 +97,7 @@ t_chunk			*init_chunks(size_t size)
     return (big_chunk(&(g_chunks[2]), size));
 }
 
-void    *malloc2(size_t size)
+void    *malloc(size_t size)
 {
     return (((void *)init_chunks(size)) + sizeof(t_chunk));
 }
@@ -140,7 +139,6 @@ void    free_in_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       page_freed = 0;
     if (page_freed)
     {
-      dprintf(1, "Page freed !\n");
       if (previous == NULL)
         *chunks = tmp->next;
       else
@@ -165,7 +163,9 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
         tmp = tmp->next;
       }
       if (previous == NULL)
-        *chunks = NULL;
+      {
+        *chunks = tmp->next;
+      }
       else
         previous->next = chunk->next;
       munmap(chunk, chunk->size);
@@ -174,7 +174,7 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       free_in_chunk(chunk, chunks, type);
 }
 
-void    free2(void *ptr)
+void    free(void *ptr)
 {
     t_chunk *chunk;
     size_t  max_tiny;
@@ -201,6 +201,6 @@ void    free2(void *ptr)
 
 void    show_alloc_mem(void)
 {
-    print_alloc_mem(g_chunks);
+    print_alloc_mem(g_chunks[0], g_chunks[1], g_chunks[2]);
 }
 
