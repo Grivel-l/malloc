@@ -15,7 +15,32 @@
 
 static void		print_address(void *address)
 {
-    dprintf(1, "%p", address);
+    size_t  nbr;
+    size_t  tmp;
+    char    *result;
+    void    *pointer;
+
+    if ((result = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
+      return ;
+    pointer = result;
+    write(1, "0x", 2);
+    nbr = (size_t)address;
+    while (nbr != 0)
+    {
+      tmp = nbr % 16;
+      if (tmp <= 9)
+        *result = tmp + 48;
+      else
+        *result = 97 + tmp - 10;
+      result += 1;
+      nbr /= 16;
+    }
+    while ((void *)result >= pointer)
+    {
+      write(1, &(*result), 1);
+      result -= 1;
+    }
+    munmap(pointer, getpagesize());
 }
 
 void    print_chunk(t_chunk *chunk)
