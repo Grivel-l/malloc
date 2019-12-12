@@ -20,6 +20,7 @@ size_t    get_chunk_size(size_t size, int page_size) {
 }
 
 t_chunk   *create_chunk(t_chunk **chunk, size_t size, int chunk_size) {
+    dprintf(1, "Mmapping...\n");
     if ((*chunk = mmap(NULL, chunk_size,
   PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
       return (NULL);
@@ -135,8 +136,11 @@ void    free_in_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       tmp = tmp->next;
       total += tmp->size + sizeof(t_chunk);
     }
+    if (!tmp->freed)
+      page_freed = 0;
     if (page_freed)
     {
+      dprintf(1, "Page freed !\n");
       if (previous == NULL)
         *chunks = tmp->next;
       else
@@ -152,7 +156,6 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
     t_chunk *previous;
 
     tmp = *chunks;
-    dprintf(1, "Free_Chunk: %p\n", *chunks);
     if (type == -1)
     {
       previous = NULL;
@@ -178,7 +181,9 @@ void    free2(void *ptr)
     size_t  max_small;
     int     page_size;
 
-    dprintf(1, "%p %p %p\n", g_chunks[0], g_chunks[1], g_chunks[2]);
+    chunk = g_chunks[0];
+    /* dprintf(1, "Chunks: %p %p %p\n", chunk, chunk->next, ((t_chunk *)(chunk->next))->next); */
+    /* dprintf(1, "Before Chunks: %p %p %p\n", g_chunks[0], g_chunks[1], g_chunks[2]); */
     if (ptr == NULL)
       return ;
     chunk = ptr - sizeof(t_chunk);
@@ -186,11 +191,9 @@ void    free2(void *ptr)
     page_size = getpagesize();
     max_tiny = page_size * TINY / 100 - sizeof(t_chunk);
     max_small = page_size * SMALL / 100 - sizeof(t_chunk);
-    dprintf(1, "Chunk size %zu\n", get_chunk_size(chunk->size, page_size * TINY));
-    dprintf(1, "Max: %zu, %zu\n", max_tiny, max_small);
     if (chunk->size <= max_tiny)
       free_chunk(chunk, &(g_chunks[0]), TINY);
-    else if (chunk->size >= max_tiny && chunk->size >= max_small)
+    else if (chunk->size > max_tiny && chunk->size <= max_small)
       free_chunk(chunk, &(g_chunks[1]), SMALL);
     else
       free_chunk(chunk, &(g_chunks[2]), -1);
