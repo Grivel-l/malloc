@@ -15,76 +15,89 @@
 
 static void		print_address(void *address)
 {
-	dprintf(1, "%p", address);
+    size_t  nbr;
+    size_t  tmp;
+    char    *result;
+    void    *pointer;
+
+    if ((result = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
+      return ;
+    pointer = result;
+    write(1, "0x", 2);
+    nbr = (size_t)address;
+    while (nbr != 0)
+    {
+      tmp = nbr % 16;
+      if (tmp <= 9)
+        *result = tmp + 48;
+      else
+        *result = 97 + tmp - 10;
+      result += 1;
+      nbr /= 16;
+    }
+    while ((void *)result >= pointer)
+    {
+      write(1, &(*result), 1);
+      result -= 1;
+    }
+    munmap(pointer, getpagesize());
 }
 
-static size_t	print_chunk(t_chunk **chunk, size_t type)
+void    print_chunk(t_chunk *chunk)
 {
-	void			*pointer;
-	static size_t	old_type = -1;
-	
-	if ((*chunk)->freed)
-	{
-		*chunk = (*chunk)->next;
-		return (1);
-	}
-	pointer = (void *)(*chunk);
-	if (old_type != type)
-	{
-		old_type = type;
-		if (type == TINY_M)
-			ft_putstr("TINY : ");
-		else if (type == 0)
-			ft_putstr("SMALL : ");
-		else
-			ft_putstr("LARGE : ");
-		print_address(pointer);
-		ft_putchar('\n');
-	}
-	if ((*chunk)->next == NULL || ((*chunk)->next != NULL && (*chunk)->next->chunk_size != 0))
-		old_type = -1;
-	print_address(pointer + sizeof(t_chunk));
-	ft_putstr(" - ");
-	print_address(pointer + sizeof(t_chunk) + (*chunk)->size);
-	ft_putstr(" : ");
-	ft_putnbr((*chunk)->size);
-	ft_putstr((*chunk)->size > 1 ? " octets\n" : " octet\n");
-	*chunk = (*chunk)->next;
-	return (1);
+    print_address(((void *)chunk) + sizeof(t_chunk));
+    write(1, " - ", 3);
+    print_address(((void *)chunk) + sizeof(t_chunk) + chunk->size);
+    write(1, " : ", 3);
+    ft_putnbr(chunk->size);
+    write(1, " bytes\n", 7);
 }
 
-static size_t	print_asc(t_chunk **chunk, t_chunk **chunk2, t_chunk **chunk3, size_t type)
+void    print_chunks(t_chunk **chunk, int type)
 {
-	if (*chunk != NULL)
-	{
-		if (*chunk2 == NULL && *chunk3 == NULL)
-			return (print_chunk(chunk, type));
-		else if (*chunk2 != NULL)
-		{
-			if (*chunk3 != NULL)
-			{
-				if (*chunk < *chunk2 && *chunk < *chunk3)
-					return (print_chunk(chunk, type));
-			}
-			else
-				if (*chunk < *chunk2)
-					return (print_chunk(chunk, type));
-		}
-		else
-		{
-			if (*chunk3 != NULL)
-			{
-				if (*chunk < *chunk3)
-					return (print_chunk(chunk, type));
-			}
-		}
-	}
-	return (0);
+    int     total;
+    int     pagesize;
+
+    if ((*chunk)->freed)
+    {
+      *chunk = (*chunk)->next;
+      return ;
+    }
+    if (type == TINY)
+      write(1, "TINY : ", 7);
+    else if (type == SMALL)
+      write(1, "SMALL : ", 8);
+    else
+      write(1, "LARGE : ", 8);
+    print_address(((void *)*chunk) + sizeof(t_chunk));
+    write(1, "\n", 1);
+    if (type == -1)
+    {
+      print_chunk(*chunk);
+      *chunk = (*chunk)->next;
+      return ;
+    }
+    total = 0;
+    pagesize = getpagesize();
+    while (total < pagesize * type)
+    {
+      print_chunk(*chunk);
+      total += (*chunk)->size + sizeof(t_chunk);
+      *chunk = (*chunk)->next;
+      if (*chunk == NULL || total + (*chunk)->size + sizeof(t_chunk) > (size_t)(pagesize * type))
+        return ;
+    }
 }
 
-void			print_alloc_mem(t_chunk_types *chunks)
+void			print_alloc_mem(t_chunk *chunks0, t_chunk *chunks1, t_chunk *chunks2)
 {
-	if (print_asc(&(chunks->tiny), &(chunks->small), &(chunks->large), TINY_M) == 0)
-		if (print_asc(&(chunks->small), &(chunks->tiny), &(chunks->large), 0) == 0)
-			print_asc(&(chunks->large), &(chunks->small), &(chunks->tiny), SMALL_M);
+    if (chunks0 == NULL && chunks1 == NULL && chunks2 == NULL)
+      return ;
+    if (chunks0 != NULL && (chunks1 == NULL || chunks0 < chunks1) && (chunks2 == NULL || chunks0 < chunks2))
+      print_chunks(&chunks0, TINY);
+    if (chunks1 != NULL && (chunks0 == NULL || chunks1 < chunks0) && (chunks2 == NULL || chunks1 < chunks2))
+      print_chunks(&chunks1, SMALL);
+    if (chunks2 != NULL && (chunks1 == NULL || chunks2 < chunks1) && (chunks0 == NULL || chunks2 < chunks0))
+      print_chunks(&chunks2, -1);
+    print_alloc_mem(chunks0, chunks1, chunks2);
 }
