@@ -15,7 +15,7 @@
 
 static void		print_address(void *address)
 {
-	dprintf(1, "%p", address);
+    dprintf(1, "%p", address);
 }
 
 void    print_chunk(t_chunk *chunk)
@@ -33,6 +33,11 @@ void    print_chunks(t_chunk **chunk, int type)
     int     total;
     int     pagesize;
 
+    if ((*chunk)->freed)
+    {
+      *chunk = (*chunk)->next;
+      return ;
+    }
     if (type == TINY)
       write(1, "TINY : ", 7);
     else if (type == SMALL)

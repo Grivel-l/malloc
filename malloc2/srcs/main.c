@@ -174,26 +174,59 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       free_in_chunk(chunk, chunks, type);
 }
 
-void    free(void *ptr)
+int     get_type(t_chunk *chunk)
 {
-    t_chunk *chunk;
+    int   pagesize;
     size_t  max_tiny;
     size_t  max_small;
-    int     page_size;
+
+    pagesize = getpagesize();
+    max_tiny = pagesize * TINY / 100 - sizeof(t_chunk);
+    max_small = pagesize * SMALL / 100 - sizeof(t_chunk);
+    if (chunk->size <= max_tiny)
+      return TINY;
+    else if (chunk->size > max_tiny && chunk->size <= max_small)
+      return SMALL;
+    return -1;
+}
+
+t_chunk *get_base_chunk(t_chunk *chunk, int type)
+{
+    t_chunk *chunks;
+    size_t  total;
+    size_t  chunk_size;
+
+    total = 0;
+    if (type == TINY)
+      chunks = g_chunks[0];
+    else if (type == SMALL)
+      chunks = g_chunks[1];
+    else
+      chunks = g_chunks[2];
+    chunk_size = get_chunk_size(chunk->size, getpagesize());
+    while (chunks != chunk) {
+      total += chunks->size + sizeof(t_chunk);
+      if (total > chunk_size)
+        total = chunk->size + sizeof(t_chunk);
+      chunks = chunks->next;
+    }
+    return (((void *)chunks) - total);
+}
+
+void    free(void *ptr)
+{
+    int     type;
+    t_chunk *chunk;
 
     chunk = g_chunks[0];
-    /* dprintf(1, "Chunks: %p %p %p\n", chunk, chunk->next, ((t_chunk *)(chunk->next))->next); */
-    /* dprintf(1, "Before Chunks: %p %p %p\n", g_chunks[0], g_chunks[1], g_chunks[2]); */
     if (ptr == NULL)
       return ;
     chunk = ptr - sizeof(t_chunk);
     chunk->freed = 1;
-    page_size = getpagesize();
-    max_tiny = page_size * TINY / 100 - sizeof(t_chunk);
-    max_small = page_size * SMALL / 100 - sizeof(t_chunk);
-    if (chunk->size <= max_tiny)
+    type = get_type(chunk);
+    if (type == TINY)
       free_chunk(chunk, &(g_chunks[0]), TINY);
-    else if (chunk->size > max_tiny && chunk->size <= max_small)
+    else if (type == SMALL)
       free_chunk(chunk, &(g_chunks[1]), SMALL);
     else
       free_chunk(chunk, &(g_chunks[2]), -1);
@@ -202,5 +235,32 @@ void    free(void *ptr)
 void    show_alloc_mem(void)
 {
     print_alloc_mem(g_chunks[0], g_chunks[1], g_chunks[2]);
+}
+
+void    *realloc(void *ptr, size_t size)
+{
+    t_chunk *base;
+    t_chunk *chunk;
+
+    if (ptr == NULL)
+      return (malloc(size));
+    if (size == 0 && ptr != NULL)
+    {
+      free(ptr);
+      return (malloc(size));
+    }
+    chunk = ptr - sizeof(t_chunk);
+    base = get_base_chunk(chunk, get_type(chunk));
+    if (size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) &&
+      (chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk)))
+    {
+      chunk->size = size;
+      return (ptr);
+    }
+    if ((base = malloc(size)) == NULL)
+      return (NULL);
+    ft_memcpy(base, ptr, chunk->size);
+    free(ptr);
+    return (base);
 }
 
