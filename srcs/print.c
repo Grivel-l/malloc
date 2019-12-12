@@ -101,3 +101,8 @@ void			print_alloc_mem(t_chunk *chunks0, t_chunk *chunks1, t_chunk *chunks2)
       print_chunks(&chunks2, -1);
     print_alloc_mem(chunks0, chunks1, chunks2);
 }
+
+void    show_alloc_mem(void)
+{
+    print_alloc_mem(g_chunks[0], g_chunks[1], g_chunks[2]);
+}
