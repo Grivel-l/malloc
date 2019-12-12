@@ -97,7 +97,7 @@ t_chunk			*init_chunks(size_t size)
     return (big_chunk(&(g_chunks[2]), size));
 }
 
-void    *malloc(size_t size)
+void    *malloc2(size_t size)
 {
     return (((void *)init_chunks(size)) + sizeof(t_chunk));
 }
@@ -128,13 +128,12 @@ void    free_in_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       tmp = tmp->next;
     }
     tmp->freed = 1;
-    while (tmp != NULL && total + tmp->size + sizeof(t_chunk) < page_size * type)
+    while (tmp->next != NULL && total + tmp->size + sizeof(t_chunk) < page_size * type)
     {
       if (!tmp->freed)
         page_freed = 0;
       tmp = tmp->next;
       total += tmp->size + sizeof(t_chunk);
-    dprintf(1, "HelloWorld\n");
     }
     if (page_freed)
     {
@@ -153,6 +152,7 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
     t_chunk *previous;
 
     tmp = *chunks;
+    dprintf(1, "Free_Chunk: %p\n", *chunks);
     if (type == -1)
     {
       previous = NULL;
@@ -171,13 +171,14 @@ void    free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
       free_in_chunk(chunk, chunks, type);
 }
 
-void    free(void *ptr)
+void    free2(void *ptr)
 {
     t_chunk *chunk;
     size_t  max_tiny;
     size_t  max_small;
     int     page_size;
 
+    dprintf(1, "%p %p %p\n", g_chunks[0], g_chunks[1], g_chunks[2]);
     if (ptr == NULL)
       return ;
     chunk = ptr - sizeof(t_chunk);
@@ -185,9 +186,11 @@ void    free(void *ptr)
     page_size = getpagesize();
     max_tiny = page_size * TINY / 100 - sizeof(t_chunk);
     max_small = page_size * SMALL / 100 - sizeof(t_chunk);
-    if (get_chunk_size(chunk->size, page_size * TINY) <= max_tiny)
+    dprintf(1, "Chunk size %zu\n", get_chunk_size(chunk->size, page_size * TINY));
+    dprintf(1, "Max: %zu, %zu\n", max_tiny, max_small);
+    if (chunk->size <= max_tiny)
       free_chunk(chunk, &(g_chunks[0]), TINY);
-    else if (get_chunk_size(chunk->size, page_size * SMALL) >= max_tiny && chunk->size >= max_small)
+    else if (chunk->size >= max_tiny && chunk->size >= max_small)
       free_chunk(chunk, &(g_chunks[1]), SMALL);
     else
       free_chunk(chunk, &(g_chunks[2]), -1);
