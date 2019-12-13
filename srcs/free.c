@@ -13,11 +13,39 @@
 
 #include "malloc.h"
 
-static void	free_in_chunk(t_chunk *chunk, t_chunk **chunks, int type)
+static int	check_freed(t_chunk **tmp, size_t total,
+size_t page_freed, size_t chunk_size)
+{
+	(*tmp)->freed = 1;
+	while ((*tmp)->next != NULL &&
+	total + (*tmp)->size + sizeof(t_chunk) < chunk_size)
+	{
+		if (!(*tmp)->freed)
+			page_freed = 0;
+		(*tmp) = (*tmp)->next;
+		total += (*tmp)->size + sizeof(t_chunk);
+	}
+	if (!(*tmp)->freed)
+		page_freed = 0;
+	return (page_freed);
+}
+
+static void	free_page(t_chunk *previous, t_chunk **chunks,
+t_chunk **tmp, size_t total, size_t chunk_size)
+{
+	if (previous == NULL)
+		*chunks = (*tmp)->next;
+	else
+		previous->next = (*tmp)->next;
+	*tmp = ((void *)(*tmp)) - total;
+	munmap(*tmp, get_chunk_size((*tmp)->size, chunk_size));
+}
+
+static void	free_in_chunk(t_chunk *chunk,
+t_chunk **chunks, size_t chunk_size)
 {
 	t_chunk	*tmp;
 	size_t	total;
-	size_t	page_size;
 	t_chunk	*previous;
 	size_t	page_freed;
 
@@ -25,39 +53,20 @@ static void	free_in_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 	tmp = *chunks;
 	page_freed = 1;
 	previous = NULL;
-	page_size = getpagesize();
 	while (tmp != chunk)
 	{
 		if (!tmp->freed)
 			page_freed = 0;
 		total += tmp->size + sizeof(t_chunk);
-		if (total > page_size * type)
+		if (total > chunk_size)
 		{
 			previous = ((void *)tmp) - total;
 			total = tmp->size + sizeof(t_chunk);
 		}
 		tmp = tmp->next;
 	}
-	tmp->freed = 1;
-	while (tmp->next != NULL &&
-	total + tmp->size + sizeof(t_chunk) < page_size * type)
-	{
-		if (!tmp->freed)
-			page_freed = 0;
-		tmp = tmp->next;
-		total += tmp->size + sizeof(t_chunk);
-	}
-	if (!tmp->freed)
-		page_freed = 0;
-	if (page_freed)
-	{
-		if (previous == NULL)
-			*chunks = tmp->next;
-		else
-			previous->next = tmp->next;
-		tmp = ((void *)tmp) - total;
-		munmap(tmp, get_chunk_size(tmp->size, page_size * type));
-	}
+	if (check_freed(&tmp, total, page_freed, chunk_size))
+		free_page(previous, chunks, &tmp, total, chunk_size);
 }
 
 static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
@@ -81,7 +90,7 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 		munmap(chunk, chunk->size);
 	}
 	else
-		free_in_chunk(chunk, chunks, type);
+		free_in_chunk(chunk, chunks, getpagesize() * type);
 }
 
 void		free(void *ptr)
