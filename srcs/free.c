@@ -89,12 +89,11 @@ void		free(void *ptr)
 	int		type;
 	t_chunk	*chunk;
 
-	chunk = g_chunks[0];
 	if (ptr == NULL)
 		return ;
 	chunk = ptr - sizeof(t_chunk);
 	chunk->freed = 1;
-	type = get_type(chunk);
+	type = get_type(chunk->size);
 	if (type == TINY)
 		free_chunk(chunk, &(g_chunks[0]), TINY);
 	else if (type == SMALL)

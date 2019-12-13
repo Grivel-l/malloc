@@ -18,7 +18,7 @@ size_t	get_chunk_size(size_t size, int page_size)
 	return ((size + (page_size - 1)) & -page_size);
 }
 
-int		get_type(t_chunk *chunk)
+int		get_type(size_t size)
 {
 	size_t	max_tiny;
 	size_t	max_small;
@@ -27,9 +27,9 @@ int		get_type(t_chunk *chunk)
 	pagesize = getpagesize();
 	max_tiny = pagesize * TINY / 100 - sizeof(t_chunk);
 	max_small = pagesize * SMALL / 100 - sizeof(t_chunk);
-	if (chunk->size <= max_tiny)
+	if (size <= max_tiny)
 		return (TINY);
-	else if (chunk->size > max_tiny && chunk->size <= max_small)
+	else if (size > max_tiny && size <= max_small)
 		return (SMALL);
 	return (-1);
 }

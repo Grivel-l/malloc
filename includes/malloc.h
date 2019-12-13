@@ -35,7 +35,7 @@ void    *malloc(size_t size);
 
 void    free(void *ptr);
 
-int     get_type(t_chunk *chunk);
+int     get_type(size_t size);
 t_chunk *get_base_chunk(t_chunk *chunk, int type);
 size_t  get_chunk_size(size_t size, int page_size);
 

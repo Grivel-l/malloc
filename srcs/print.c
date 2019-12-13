@@ -29,10 +29,7 @@ static void	print_address(void *address)
 	while (nbr != 0)
 	{
 		tmp = nbr % 16;
-		if (tmp <= 9)
-			*result = tmp + 48;
-		else
-			*result = 97 + tmp - 10;
+		*result = tmp <= 9 ? tmp + 48 : 97 + tmp - 10;
 		result += 1;
 		nbr /= 16;
 	}
