@@ -11,6 +11,9 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
+#ifndef MALLOC_H
+# define MALLOC_H
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
@@ -26,7 +29,7 @@ typedef struct s_chunk
     char    freed;
 }             t_chunk;
 
-static t_chunk *(g_chunks[3]) = {NULL, NULL, NULL};
+extern t_chunk	*(g_chunks[3]);
 
 void    *malloc(size_t size);
 
@@ -37,3 +40,4 @@ t_chunk *get_base_chunk(t_chunk *chunk, int type);
 size_t  get_chunk_size(size_t size, int page_size);
 
 void    print_alloc_mem(t_chunk *chunks0, t_chunk *chunks1, t_chunk *chunks2);
+#endif
