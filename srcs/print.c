@@ -51,11 +51,26 @@ void		print_chunk(t_chunk *chunk)
 	write(1, " bytes\n", 7);
 }
 
-void		print_chunks(t_chunk **chunk, int type)
+static void	print_all_chunks(t_chunk **chunk, int type)
 {
 	int	total;
 	int	pagesize;
 
+	total = 0;
+	pagesize = getpagesize();
+	while (total < pagesize * type)
+	{
+		print_chunk(*chunk);
+		total += (*chunk)->size + sizeof(t_chunk);
+		*chunk = (*chunk)->next;
+		if (*chunk == NULL ||
+	total + (*chunk)->size + sizeof(t_chunk) > (size_t)(pagesize * type))
+			return ;
+	}
+}
+
+void		print_chunks(t_chunk **chunk, int type)
+{
 	if ((*chunk)->freed)
 	{
 		*chunk = (*chunk)->next;
@@ -75,37 +90,28 @@ void		print_chunks(t_chunk **chunk, int type)
 		*chunk = (*chunk)->next;
 		return ;
 	}
-	total = 0;
-	pagesize = getpagesize();
-	while (total < pagesize * type)
-	{
-		print_chunk(*chunk);
-		total += (*chunk)->size + sizeof(t_chunk);
-		*chunk = (*chunk)->next;
-		if (*chunk == NULL ||
-	total + (*chunk)->size + sizeof(t_chunk) > (size_t)(pagesize * type))
-			return ;
-	}
-}
-
-void		print_alloc_mem(t_chunk *chunks0,
-t_chunk *chunks1, t_chunk *chunks2)
-{
-	if (chunks0 == NULL && chunks1 == NULL && chunks2 == NULL)
-		return ;
-	if (chunks0 != NULL && (chunks1 == NULL || chunks0 < chunks1) &&
-		(chunks2 == NULL || chunks0 < chunks2))
-		print_chunks(&chunks0, TINY);
-	if (chunks1 != NULL && (chunks0 == NULL || chunks1 < chunks0) &&
-		(chunks2 == NULL || chunks1 < chunks2))
-		print_chunks(&chunks1, SMALL);
-	if (chunks2 != NULL && (chunks1 == NULL || chunks2 < chunks1) &&
-		(chunks0 == NULL || chunks2 < chunks0))
-		print_chunks(&chunks2, -1);
-	print_alloc_mem(chunks0, chunks1, chunks2);
+	print_all_chunks(chunk, type);
 }
 
 void		show_alloc_mem(void)
 {
-	print_alloc_mem(g_chunks[0], g_chunks[1], g_chunks[2]);
+	t_chunk	*chunks0;
+	t_chunk	*chunks1;
+	t_chunk	*chunks2;
+
+	chunks0 = g_chunks[0];
+	chunks1 = g_chunks[1];
+	chunks2 = g_chunks[2];
+	while (chunks0 != NULL || chunks1 != NULL || chunks2 != NULL)
+	{
+		if (chunks0 != NULL && (chunks1 == NULL || chunks0 < chunks1) &&
+			(chunks2 == NULL || chunks0 < chunks2))
+			print_chunks(&chunks0, TINY);
+		if (chunks1 != NULL && (chunks0 == NULL || chunks1 < chunks0) &&
+			(chunks2 == NULL || chunks1 < chunks2))
+			print_chunks(&chunks1, SMALL);
+		if (chunks2 != NULL && (chunks1 == NULL || chunks2 < chunks1) &&
+			(chunks0 == NULL || chunks2 < chunks0))
+			print_chunks(&chunks2, -1);
+	}
 }

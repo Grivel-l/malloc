@@ -28,8 +28,8 @@ void	*realloc(void *ptr, size_t size)
 	chunk = ptr - sizeof(t_chunk);
 	base = get_base_chunk(chunk, get_type(chunk->size));
 	if (size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) &&
-(chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk)) &&
-get_type(chunk->size) == get_type(size))
+(chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk))
+	&& get_type(chunk->size) == get_type(size))
 	{
 		chunk->size = size;
 		return (ptr);
