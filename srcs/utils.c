@@ -50,9 +50,7 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	chunk_size = get_chunk_size(chunk->size, getpagesize());
 	while (chunks != chunk)
 	{
-        dprintf(1, "HelloWorld %p\n", chunks);
 		total += chunks->size + sizeof(t_chunk);
-        dprintf(1, "HelloWorld\n");
 		if (total > chunk_size)
 			total = chunk->size + sizeof(t_chunk);
 		chunks = chunks->next;
