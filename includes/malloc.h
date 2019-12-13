@@ -29,7 +29,7 @@ struct			s_chunk
 	char		freed;
 };
 
-typedef s_chunk		t_chunk;
+typedef struct s_chunk		t_chunk;
 
 extern t_chunk		*(g_chunks[3]);
 
