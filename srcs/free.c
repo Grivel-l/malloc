@@ -31,25 +31,26 @@ size_t page_freed, size_t chunk_size)
 }
 
 static void	free_page(t_chunk *previous, t_chunk **chunks,
-t_chunk **tmp, size_t total, size_t chunk_size)
+t_chunk **tmp, size_t total[2])
 {
 	if (previous == NULL)
 		*chunks = (*tmp)->next;
 	else
 		previous->next = (*tmp)->next;
-	*tmp = ((void *)(*tmp)) - total;
-	munmap(*tmp, get_chunk_size((*tmp)->size, chunk_size));
+	*tmp = ((void *)(*tmp)) - total[0];
+	munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
 }
 
 static void	free_in_chunk(t_chunk *chunk,
 t_chunk **chunks, size_t chunk_size)
 {
 	t_chunk	*tmp;
-	size_t	total;
+	size_t	total[2];
 	t_chunk	*previous;
 	size_t	page_freed;
 
-	total = 0;
+	total[0] = 0;
+	total[1] = chunk_size;
 	tmp = *chunks;
 	page_freed = 1;
 	previous = NULL;
@@ -57,16 +58,16 @@ t_chunk **chunks, size_t chunk_size)
 	{
 		if (!tmp->freed)
 			page_freed = 0;
-		total += tmp->size + sizeof(t_chunk);
-		if (total > chunk_size)
+		total[0] += tmp->size + sizeof(t_chunk);
+		if (total[0] > chunk_size)
 		{
-			previous = ((void *)tmp) - total;
-			total = tmp->size + sizeof(t_chunk);
+			previous = ((void *)tmp) - total[0];
+			total[0] = tmp->size + sizeof(t_chunk);
 		}
 		tmp = tmp->next;
 	}
-	if (check_freed(&tmp, total, page_freed, chunk_size))
-		free_page(previous, chunks, &tmp, total, chunk_size);
+	if (check_freed(&tmp, total[0], page_freed, chunk_size))
+		free_page(previous, chunks, &tmp, total);
 }
 
 static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)

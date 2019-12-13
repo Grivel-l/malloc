@@ -22,23 +22,25 @@
 # define TINY 1
 # define SMALL 8
 
-typedef struct		s_chunk
+struct			s_chunk
 {
-	size_t			size;
-	void			*next;
-	char			freed;
-}					t_chunk;
+	size_t		size;
+	void		*next;
+	char		freed;
+};
 
-extern t_chunk	*(g_chunks[3]);
+typedef s_chunk		t_chunk;
 
-void		*malloc(size_t size);
+extern t_chunk		*(g_chunks[3]);
 
-void		free(void *ptr);
+void			*malloc(size_t size);
 
-int			get_type(size_t size);
-t_chunk		*get_base_chunk(t_chunk *chunk, int type);
-size_t		get_chunk_size(size_t size, int page_size);
+void			free(void *ptr);
 
-void		print_alloc_mem(t_chunk *chunks0,
+int				get_type(size_t size);
+t_chunk			*get_base_chunk(t_chunk *chunk, int type);
+size_t			get_chunk_size(size_t size, int page_size);
+
+void			print_alloc_mem(t_chunk *chunks0,
 t_chunk *chunks1, t_chunk *chunks2);
 #endif
