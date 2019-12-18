@@ -46,7 +46,7 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 
 	total = 0;
 	previous = NULL;
-	while (chunk->next != NULL)
+	while (chunk != NULL)
 	{
 		if (total + chunk->size + sizeof(t_chunk) > chunk_size &&
 				total + size + sizeof(t_chunk) <= chunk_size)
@@ -57,6 +57,7 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 		previous = chunk;
 		chunk = chunk->next;
 	}
+	chunk = previous;
 	if (total + size + sizeof(t_chunk) * 2 + chunk->size <= chunk_size)
 		return (append_chunk(chunk, size));
 	if ((new_chunk =
