@@ -55,7 +55,10 @@ void	*realloc(void *ptr, size_t size)
 		return (malloc(size));
 	}
 	chunk = ptr - sizeof(t_chunk);
+	dprintf(1, "Chunk: %zu\n", chunk->size);
 	base = get_base_chunk(chunk, get_type(chunk->size));
+	dprintf(1, "Here3\n");
+	dprintf(1, "Base: %zu\n", base->size);
 	// TODO Statement useless here
 	if (base == NULL)
 		return (NULL);
@@ -77,9 +80,11 @@ void	*realloc(void *ptr, size_t size)
 (chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk))
 	&& get_type(chunk->size) == get_type(size))
 	{
+		dprintf(1, "Here\n");
 		chunk->size = size;
 		return (ptr);
 	}
+	dprintf(1, "Here2\n");
 	if ((base = malloc(size)) == NULL)
 		return (NULL);
 	ft_memcpy(base, ptr, chunk->size);

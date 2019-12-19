@@ -47,13 +47,17 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 		chunks = g_chunks[1];
 	else
 		chunks = g_chunks[2];
+	// TODO Adjust chunk_size for large
 	chunk_size = get_chunk_size(chunk->size, getpagesize());
 	while (chunks != chunk)
 	{
 		total += chunks->size + sizeof(t_chunk);
+		dprintf(1, "Total: %zu, %zu\n", total, chunk_size);
 		if (total > chunk_size)
 			total = chunk->size + sizeof(t_chunk);
 		chunks = chunks->next;
 	}
+	dprintf(1, "Final total: %zu\n", total);
+	chunks = ((void *)chunks) - total;
 	return (((void *)chunks) - total);
 }
