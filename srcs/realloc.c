@@ -13,13 +13,42 @@
 
 #include "malloc.h"
 
+static int		check(void *ptr) {
+	t_chunk	*chunk;
+
+	chunk = g_chunks[0];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	chunk = g_chunks[1];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	chunk = g_chunks[2];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	return (1);
+}
+
+
 void	*realloc(void *ptr, size_t size)
 {
 	t_chunk *base;
 	t_chunk *chunk;
 
+	write(1, "Realloc\n", 8);
 	if (ptr == NULL)
 		return (malloc(size));
+	dprintf(1, "Realloc of %zu\n", size);
+	if (check(ptr))
+		return NULL;
 	if (size == 0 && ptr != NULL)
 	{
 		free(ptr);
@@ -27,6 +56,23 @@ void	*realloc(void *ptr, size_t size)
 	}
 	chunk = ptr - sizeof(t_chunk);
 	base = get_base_chunk(chunk, get_type(chunk->size));
+	// TODO Statement useless here
+	if (base == NULL)
+		return (NULL);
+	if (get_type(base->size) == -1) {
+		if (base->size + size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()))
+		{
+			base->size = size;
+			return (ptr);
+		}
+		else
+		{
+			chunk = malloc(size);
+			ft_memcpy(chunk, ptr, base->size > size ? size : base->size);
+			free(ptr);
+			return (chunk);
+		}
+	}
 	if (size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) &&
 (chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk))
 	&& get_type(chunk->size) == get_type(size))

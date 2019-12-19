@@ -34,7 +34,7 @@ static t_chunk	*append_chunk(t_chunk *chunk, size_t size)
 	new_chunk.size = size;
 	new_chunk.next = chunk->next;
 	chunk->next = ((void *)chunk) + chunk->size + sizeof(t_chunk);
-	ft_memcpy(chunk->next, &new_chunk, sizeof(t_chunk));
+	memcpy(chunk->next, &new_chunk, sizeof(t_chunk));
 	return (chunk->next);
 }
 
@@ -42,7 +42,6 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 {
 	size_t	total;
 	t_chunk	*previous;
-	t_chunk	*new_chunk;
 
 	total = 0;
 	previous = NULL;
@@ -60,10 +59,7 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 	chunk = previous;
 	if (total + size + sizeof(t_chunk) * 2 + chunk->size <= chunk_size)
 		return (append_chunk(chunk, size));
-	if ((new_chunk =
-	create_chunk((t_chunk **)(&(chunk->next)), size, chunk_size)) == NULL)
-		return (NULL);
-	return (new_chunk);
+	return (create_chunk((t_chunk **)(&(chunk->next)), size, chunk_size));
 }
 
 static t_chunk	*big_chunk(t_chunk **chunk, size_t size)
@@ -71,12 +67,12 @@ static t_chunk	*big_chunk(t_chunk **chunk, size_t size)
 	t_chunk	*tmp;
 
 	if (*chunk == NULL)
-		return (create_chunk(chunk, size, get_chunk_size(size, getpagesize())));
+		return (create_chunk(chunk, size, get_chunk_size(size + sizeof(t_chunk), getpagesize())));
 	tmp = *chunk;
 	while (tmp->next != NULL)
 		tmp = tmp->next;
 	return (create_chunk(((t_chunk **)(&(tmp->next))),
-	size, get_chunk_size(size, getpagesize())));
+	size, get_chunk_size(size + sizeof(t_chunk), getpagesize())));
 }
 
 void			*malloc(size_t size)
@@ -102,4 +98,10 @@ void			*malloc(size_t size)
 	if (chunk == NULL)
 		return (NULL);
 	return (((void *)chunk) + sizeof(t_chunk));
+}
+
+void	yclear(void) {
+	g_chunks[0] = NULL;
+	g_chunks[1] = NULL;
+	g_chunks[2] = NULL;
 }

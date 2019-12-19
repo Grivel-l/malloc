@@ -11,6 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
+#include <signal.h>
 #include "malloc.h"
 
 static int	check_freed(t_chunk **tmp, size_t total,
@@ -94,12 +95,39 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 		free_in_chunk(chunk, chunks, getpagesize() * type);
 }
 
+static int		check(void *ptr) {
+	t_chunk	*chunk;
+
+	chunk = g_chunks[0];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	chunk = g_chunks[1];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	chunk = g_chunks[2];
+	while (chunk != NULL) {
+		if (chunk == ptr - sizeof(t_chunk))
+			return (0);
+		chunk = chunk->next;
+	}
+	return (1);
+}
+
 void		free(void *ptr)
 {
+	return ;
 	int		type;
 	t_chunk	*chunk;
 
 	if (ptr == NULL)
+		return ;
+	if (check(ptr))
 		return ;
 	chunk = ptr - sizeof(t_chunk);
 	chunk->freed = 1;
