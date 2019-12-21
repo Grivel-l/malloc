@@ -12,7 +12,6 @@
 /* ************************************************************************** */
 
 #include "malloc.h"
-#include <signal.h>
 
 size_t	get_chunk_size(size_t size, int page_size)
 {
