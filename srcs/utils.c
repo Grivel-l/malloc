@@ -12,6 +12,7 @@
 /* ************************************************************************** */
 
 #include "malloc.h"
+#include <signal.h>
 
 size_t	get_chunk_size(size_t size, int page_size)
 {
@@ -40,24 +41,25 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	t_chunk	*chunks;
 	size_t	chunk_size;
 
-	total = 0;
-	if (type == TINY)
+	if (type == TINY) {
 		chunks = g_chunks[0];
-	else if (type == SMALL)
+                chunk_size = getpagesize() * TINY;
+        }
+	else if (type == SMALL) {
 		chunks = g_chunks[1];
-	else
-		chunks = g_chunks[2];
-	// TODO Adjust chunk_size for large
-	chunk_size = get_chunk_size(chunk->size, getpagesize());
-	while (chunks != chunk)
+                chunk_size = getpagesize() * SMALL;
+        }
+	else 
+          return (chunk);
+	total = 0;
+	while (1)
 	{
 		total += chunks->size + sizeof(t_chunk);
-		dprintf(1, "Total: %zu, %zu\n", total, chunk_size);
 		if (total > chunk_size)
-			total = chunk->size + sizeof(t_chunk);
+			total = 0;
+                if (chunks == chunk)
+                        break ;
 		chunks = chunks->next;
 	}
-	dprintf(1, "Final total: %zu\n", total);
-	chunks = ((void *)chunks) - total;
-	return (((void *)chunks) - total);
+	return (((void *)chunks) + total);
 }
