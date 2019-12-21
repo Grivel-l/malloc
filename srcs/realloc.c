@@ -46,7 +46,6 @@ void	*realloc(void *ptr, size_t size)
 	write(1, "Realloc\n", 8);
 	if (ptr == NULL)
 		return (malloc(size));
-	dprintf(1, "Realloc of %zu\n", size);
 	if (check(ptr))
 		return NULL;
 	if (size == 0 && ptr != NULL)
@@ -56,9 +55,6 @@ void	*realloc(void *ptr, size_t size)
 	}
 	chunk = ptr - sizeof(t_chunk);
 	base = get_base_chunk(chunk, get_type(chunk->size));
-	// TODO Statement useless here
-	if (base == NULL)
-		return (NULL);
 	if (get_type(base->size) == -1) {
 		if (base->size + size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()))
 		{

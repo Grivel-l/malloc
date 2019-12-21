@@ -40,20 +40,25 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	t_chunk	*chunks;
 	size_t	chunk_size;
 
-	total = 0;
-	if (type == TINY)
+	if (type == TINY) {
 		chunks = g_chunks[0];
-	else if (type == SMALL)
+                chunk_size = getpagesize() * TINY;
+        }
+	else if (type == SMALL) {
 		chunks = g_chunks[1];
-	else
-		chunks = g_chunks[2];
-	chunk_size = get_chunk_size(chunk->size, getpagesize());
-	while (chunks != chunk)
+                chunk_size = getpagesize() * SMALL;
+        }
+	else 
+          return (chunk);
+	total = 0;
+	while (1)
 	{
 		total += chunks->size + sizeof(t_chunk);
 		if (total > chunk_size)
-			total = chunk->size + sizeof(t_chunk);
+			total = 0;
+                if (chunks == chunk)
+                        break ;
 		chunks = chunks->next;
 	}
-	return (((void *)chunks) - total);
+	return (((void *)chunks) + total);
 }
