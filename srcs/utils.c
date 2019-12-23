@@ -51,14 +51,12 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	else 
           return (chunk);
 	total = 0;
-	while (1)
+	while (chunks != chunk)
 	{
 		total += chunks->size + sizeof(t_chunk);
 		if (total > chunk_size)
 			total = 0;
-                if (chunks == chunk)
-                        break ;
 		chunks = chunks->next;
 	}
-	return (((void *)chunks) + total);
+	return (((void *)chunks) - total);
 }
