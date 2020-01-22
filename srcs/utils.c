@@ -55,7 +55,7 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	{
 		total += chunks->size + sizeof(t_chunk);
 		if (total > chunk_size)
-			total = 0;
+			total = chunks->size + sizeof(t_chunk);
 		chunks = chunks->next;
 	}
 	return (((void *)chunks) - total);

@@ -121,7 +121,6 @@ static int		check(void *ptr) {
 
 void		free(void *ptr)
 {
-	return ;
 	int		type;
 	t_chunk	*chunk;
 

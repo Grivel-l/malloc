@@ -37,13 +37,13 @@ static int		check(void *ptr) {
 	return (1);
 }
 
+void    show_alloc_mem(void);
 
 void	*realloc(void *ptr, size_t size)
 {
 	t_chunk *base;
 	t_chunk *chunk;
 
-	write(1, "Realloc\n", 8);
 	if (ptr == NULL)
 		return (malloc(size));
 	if (check(ptr))
