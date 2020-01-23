@@ -71,24 +71,6 @@ void	*realloc(void *ptr, size_t size)
 	if (get_type(base->size) == -1) {
 		if (size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) && base->size < size)
 		{
-                        /* size_t  tmp; */
-                        /* tmp = base->size; */
-                        /* base->size = size; */
-                        /* if (tmp < size) */
-                        /*   return (ptr); */
-                        /* chunk = get_previous(base); */
-                        /* if (chunk == NULL) */
-                        /*   g_chunks[2] = NULL; */
-                        /* else */
-                        /*   chunk->next = base->next; */
-                        /* if (get_type(size) == TINY) { */
-                        /*   base->next = g_chunks[0]; */
-                        /*   g_chunks[0] = base; */
-                        /* } */
-                        /* else if (get_type(size) == SMALL) { */
-                        /*   base->next = g_chunks[1]; */
-                        /*   g_chunks[1] = base; */
-                        /* } */
                         base->size = size;
                         return (ptr);
 		}
@@ -102,7 +84,6 @@ void	*realloc(void *ptr, size_t size)
 	}
         if (((void *)chunk) - ((void *)base) + size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) && (chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk)) && get_type(chunk->size) == get_type(size))
 	{
-                        dprintf(1, "Return here %p %p %p\n", chunk, chunk->next, ((void *)chunk) + chunk->size);
 		chunk->size = size;
 		return (ptr);
 	}
