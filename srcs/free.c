@@ -34,12 +34,14 @@ size_t page_freed, size_t chunk_size)
 static void	free_page(t_chunk *previous, t_chunk **chunks,
 t_chunk **tmp, size_t total[2])
 {
+        if ((*tmp)->next == NULL)
+          return ;
 	if (previous == NULL)
 		*chunks = (*tmp)->next;
 	else
 		previous->next = (*tmp)->next;
 	*tmp = ((void *)(*tmp)) - total[0];
-	munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
+        munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
 }
 
 static void	free_in_chunk(t_chunk *chunk,
@@ -89,7 +91,8 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 			*chunks = tmp->next;
 		else
 			previous->next = chunk->next;
-		munmap(chunk, chunk->size);
+                if (previous != NULL)
+                  munmap(chunk, chunk->size);
 	}
 	else
 		free_in_chunk(chunk, chunks, getpagesize() * type);
