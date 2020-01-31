@@ -14,38 +14,21 @@
 #include <signal.h>
 #include "malloc.h"
 
-static int	check_freed(t_chunk **tmp, size_t total,
-size_t page_freed, size_t chunk_size)
-{
-	(*tmp)->freed = 1;
-	while ((*tmp)->next != NULL &&
-	total + (*tmp)->size + sizeof(t_chunk) < chunk_size)
-	{
-		if (!(*tmp)->freed)
-			page_freed = 0;
-		(*tmp) = (*tmp)->next;
-		total += (*tmp)->size + sizeof(t_chunk);
-	}
-	if (!(*tmp)->freed)
-		page_freed = 0;
-	return (page_freed);
-}
-
 static void	free_page(t_chunk *previous, t_chunk **chunks,
-t_chunk **tmp, size_t total[2])
+		t_chunk **tmp, size_t total[2])
 {
-        if ((*tmp)->next == NULL)
-          return ;
+	if ((*tmp)->next == NULL)
+		return ;
 	if (previous == NULL)
 		*chunks = (*tmp)->next;
 	else
 		previous->next = (*tmp)->next;
 	*tmp = ((void *)(*tmp)) - total[0];
-        munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
+	munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
 }
 
 static void	free_in_chunk(t_chunk *chunk,
-t_chunk **chunks, size_t chunk_size)
+		t_chunk **chunks, size_t chunk_size)
 {
 	t_chunk	*tmp;
 	size_t	total[2];
@@ -64,6 +47,7 @@ t_chunk **chunks, size_t chunk_size)
 		total[0] += tmp->size + sizeof(t_chunk);
 		if (total[0] > chunk_size)
 		{
+			page_freed = 1;
 			previous = ((void *)tmp) - total[0];
 			total[0] = tmp->size + sizeof(t_chunk);
 		}
@@ -91,30 +75,34 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 			*chunks = tmp->next;
 		else
 			previous->next = chunk->next;
-                if (previous != NULL)
-                  munmap(chunk, chunk->size);
+		if (previous != NULL)
+			munmap(chunk, chunk->size);
 	}
 	else
 		free_in_chunk(chunk, chunks, getpagesize() * type);
 }
 
-static int		check(void *ptr) {
+static int	check(void *ptr)
+{
 	t_chunk	*chunk;
 
 	chunk = g_chunks[0];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;
 	}
 	chunk = g_chunks[1];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;
 	}
 	chunk = g_chunks[2];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;

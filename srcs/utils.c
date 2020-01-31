@@ -13,6 +13,23 @@
 
 #include "malloc.h"
 
+int	check_freed(t_chunk **tmp, size_t total,
+		size_t page_freed, size_t chunk_size)
+{
+	(*tmp)->freed = 1;
+	while ((*tmp)->next != NULL &&
+			total + (*tmp)->size + sizeof(t_chunk) < chunk_size)
+	{
+		if (!(*tmp)->freed)
+			page_freed = 0;
+		(*tmp) = (*tmp)->next;
+		total += (*tmp)->size + sizeof(t_chunk);
+	}
+	if (!(*tmp)->freed)
+		page_freed = 0;
+	return (page_freed);
+}
+
 size_t	get_chunk_size(size_t size, int page_size)
 {
 	return ((size + (page_size - 1)) & -page_size);
