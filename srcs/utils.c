@@ -13,7 +13,7 @@
 
 #include "malloc.h"
 
-int	check_freed(t_chunk **tmp, size_t total,
+int		check_freed(t_chunk **tmp, size_t total,
 		size_t page_freed, size_t chunk_size)
 {
 	(*tmp)->freed = 1;
@@ -57,16 +57,18 @@ t_chunk	*get_base_chunk(t_chunk *chunk, int type)
 	t_chunk	*chunks;
 	size_t	chunk_size;
 
-	if (type == TINY) {
+	if (type == TINY)
+	{
 		chunks = g_chunks[0];
-                chunk_size = getpagesize() * TINY;
-        }
-	else if (type == SMALL) {
+		chunk_size = getpagesize() * TINY;
+	}
+	else if (type == SMALL)
+	{
 		chunks = g_chunks[1];
-                chunk_size = getpagesize() * SMALL;
-        }
-	else 
-          return (chunk);
+		chunk_size = getpagesize() * SMALL;
+	}
+	else
+		return (chunk);
 	total = 0;
 	while (chunks != chunk)
 	{
