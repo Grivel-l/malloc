@@ -13,23 +13,27 @@
 
 #include "malloc.h"
 
-static int		check(void *ptr) {
+static int	check(void *ptr)
+{
 	t_chunk	*chunk;
 
 	chunk = g_chunks[0];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;
 	}
 	chunk = g_chunks[1];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;
 	}
 	chunk = g_chunks[2];
-	while (chunk != NULL) {
+	while (chunk != NULL)
+	{
 		if (chunk == ptr - sizeof(t_chunk))
 			return (0);
 		chunk = chunk->next;
@@ -37,22 +41,21 @@ static int		check(void *ptr) {
 	return (1);
 }
 
-t_chunk *get_previous(t_chunk *chunk)
+t_chunk		*get_previous(t_chunk *chunk)
 {
-        t_chunk *tmp;
+	t_chunk *tmp;
 
-        tmp = g_chunks[2];
-        while (tmp->next != chunk) {
-            tmp = tmp->next;
-            if (tmp == NULL)
-              return (NULL);
-        }
-        return (tmp);
+	tmp = g_chunks[2];
+	while (tmp->next != chunk)
+	{
+		tmp = tmp->next;
+		if (tmp == NULL)
+			return (NULL);
+	}
+	return (tmp);
 }
 
-void    show_alloc_mem(void);
-
-void	*realloc(void *ptr, size_t size)
+void		*realloc(void *ptr, size_t size)
 {
 	t_chunk *base;
 	t_chunk *chunk;
@@ -60,7 +63,7 @@ void	*realloc(void *ptr, size_t size)
 	if (ptr == NULL)
 		return (malloc(size));
 	if (check(ptr))
-		return NULL;
+		return (NULL);
 	if (size == 0 && ptr != NULL)
 	{
 		free(ptr);
@@ -68,11 +71,13 @@ void	*realloc(void *ptr, size_t size)
 	}
 	chunk = ptr - sizeof(t_chunk);
 	base = get_base_chunk(chunk, get_type(chunk->size));
-	if (get_type(base->size) == -1) {
-		if (size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) && base->size < size)
+	if (get_type(base->size) == -1)
+	{
+		if (size + sizeof(t_chunk) <=
+get_chunk_size(base->size, getpagesize()) && base->size < size)
 		{
-                        base->size = size;
-                        return (ptr);
+			base->size = size;
+			return (ptr);
 		}
 		else
 		{
@@ -82,7 +87,11 @@ void	*realloc(void *ptr, size_t size)
 			return (chunk);
 		}
 	}
-        if (((void *)chunk) - ((void *)base) + size + sizeof(t_chunk) <= get_chunk_size(base->size, getpagesize()) && (chunk->next == NULL || chunk->next > ((void *)chunk) + size + sizeof(t_chunk)) && get_type(chunk->size) == get_type(size))
+	if (((void *)chunk) - ((void *)base) + size + sizeof(t_chunk) <=
+get_chunk_size(base->size, getpagesize()) &&
+(chunk->next == NULL || chunk->next >
+((void *)chunk) + size + sizeof(t_chunk)) &&
+get_type(chunk->size) == get_type(size))
 	{
 		chunk->size = size;
 		return (ptr);

@@ -69,7 +69,7 @@ static void	print_all_chunks(t_chunk **chunk, int type)
 	}
 }
 
-static void		print_chunks(t_chunk **chunk, int type)
+static void	print_chunks(t_chunk **chunk, int type)
 {
 	if ((*chunk)->freed)
 	{
