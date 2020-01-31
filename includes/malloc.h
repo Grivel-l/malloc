@@ -19,8 +19,8 @@
 # include <sys/mman.h>
 # include "../libft/libft.h"
 
-# define TINY 1
-# define SMALL 8
+# define TINY 128
+# define SMALL 256
 
 struct			s_chunk
 {
