@@ -40,7 +40,7 @@ void			free(void *ptr);
 int				get_type(size_t size);
 t_chunk			*get_base_chunk(t_chunk *chunk, int type);
 size_t			get_chunk_size(size_t size, int page_size);
-int				check_free(t_chunk **tmp, size_t total,
+int				check_freed(t_chunk **tmp, size_t total,
 				size_t page_freed, size_t chunk_size);
 
 void			print_alloc_mem(t_chunk *chunks0,
