@@ -27,6 +27,8 @@ struct			s_chunk
 	size_t		size;
 	void		*next;
 	char		freed;
+        int             a;
+        int             b;
 };
 
 typedef struct s_chunk		t_chunk;

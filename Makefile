@@ -18,7 +18,7 @@ SRCS_PATH = ./srcs/
 INCS_PATH = ./includes/
 LIB_PATH = ./libft/
 FLAGS = -Wall -Wextra -Werror -Ofast
-COMPILER = gcc
+COMPILER = /usr/bin/gcc
 
 all: $(NAME)
 
@@ -34,9 +34,11 @@ $(LIB_PATH)libft.a:
 	$(COMPILER) $(FLAGS) -I $(INCS_PATH) -c $<
 
 clean:
+	make -C $(LIB_PATH) clean
 	rm -f $(OBJS)
 
 fclean: clean
+	make -C $(LIB_PATH) fclean
 	rm -f $(NAME)
 
 re: fclean all
