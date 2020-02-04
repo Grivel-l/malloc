@@ -30,7 +30,7 @@ int		check_freed(t_chunk **tmp, size_t total,
 	return (page_freed);
 }
 
-size_t	get_chunk_size(size_t size, int page_size)
+size_t	align(size_t size, int page_size)
 {
 	return ((size + (page_size - 1)) & -page_size);
 }

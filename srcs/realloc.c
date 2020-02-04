@@ -57,8 +57,8 @@ t_chunk		*get_previous(t_chunk *chunk)
 
 static void	*realloc_big(size_t size, t_chunk *chunk, t_chunk *base, void *ptr)
 {
-	if (size + sizeof(t_chunk) <=
-get_chunk_size(base->size, getpagesize()) && base->size < size)
+	if (size + sizeof(t_chunk) <= align(base->size, getpagesize()) &&
+			base->size < size)
 	{
 		base->size = size;
 		return (ptr);
@@ -75,14 +75,10 @@ get_chunk_size(base->size, getpagesize()) && base->size < size)
 size_t		is_fitting(t_chunk *chunk, t_chunk *base, size_t size)
 {
 	return (((void *)chunk) - ((void *)base) + size + sizeof(t_chunk) <=
-		get_chunk_size(base->size, getpagesize()) &&
-		(chunk->next == NULL || chunk->next >
-		((void *)chunk) + size + sizeof(t_chunk)) &&
-		get_type(chunk->size) == get_type(size));
-}
-
-static size_t align(size_t size, size_t alignment) {
-  return ((size + (alignment - 1)) & -alignment);
+			align(base->size, getpagesize()) &&
+			(chunk->next == NULL || chunk->next >
+			((void *)chunk) + size + sizeof(t_chunk)) &&
+			get_type(chunk->size) == get_type(size));
 }
 
 void		*realloc(void *ptr, size_t size)
@@ -90,12 +86,11 @@ void		*realloc(void *ptr, size_t size)
 	t_chunk *base;
 	t_chunk *chunk;
 
-        size = align(size, 16);
+	size = align(size, 16);
 	if (ptr == NULL)
 		return (malloc(size));
-	if (check(ptr)) {
+	if (check(ptr))
 		return (NULL);
-        }
 	if (size == 0 && ptr != NULL)
 	{
 		free(ptr);
@@ -105,9 +100,8 @@ void		*realloc(void *ptr, size_t size)
 	base = get_base_chunk(chunk, get_type(chunk->size));
 	if (get_type(base->size) == -1)
 		return (realloc_big(size, chunk, base, ptr));
-	if (is_fitting(chunk, base, size) && (chunk->size = size)) {
+	if (is_fitting(chunk, base, size) && (chunk->size = size))
 		return (ptr);
-        }
 	if ((base = malloc(size)) == NULL)
 		return (NULL);
 	ft_memcpy(base, ptr, chunk->size > size ? size : chunk->size);

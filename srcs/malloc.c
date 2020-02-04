@@ -27,10 +27,6 @@ PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0)) == MAP_FAILED)
 	return (*chunk);
 }
 
-static size_t align(size_t size, size_t alignment) {
-  return ((size + (alignment - 1)) & -alignment);
-}
-
 static t_chunk	*append_chunk(t_chunk *chunk, size_t size)
 {
 	t_chunk	new_chunk;
@@ -55,11 +51,6 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 		if (total + chunk->size + sizeof(t_chunk) > chunk_size &&
 				total + size + sizeof(t_chunk) <= chunk_size)
 			return (append_chunk(previous, size));
-		/* if (size <= chunk->size && chunk->freed) */
-		/* { */
-		/* 	chunk->freed = 0; */
-		/* 	return (chunk); */
-		/* } */
 		total = total > chunk_size ?
 chunk->size + sizeof(t_chunk) : total + chunk->size + sizeof(t_chunk);
 		previous = chunk;
@@ -78,21 +69,13 @@ static t_chunk	*big_chunk(t_chunk **chunk, size_t size)
 	if (*chunk == NULL)
 	{
 		return (create_chunk(chunk,
-size, get_chunk_size(size + sizeof(t_chunk), getpagesize())));
+size, align(size + sizeof(t_chunk), getpagesize())));
 	}
 	tmp = *chunk;
 	while (tmp->next != NULL)
 		tmp = tmp->next;
 	return (create_chunk(((t_chunk **)(&(tmp->next))),
-				size, get_chunk_size(size + sizeof(t_chunk), getpagesize())));
-}
-
-void                    *calloc(size_t count, size_t size) {
-        void  *yo;
-
-        yo = malloc(count * size);
-        memset(yo, 0, count * size);
-        return (yo);
+	size, align(size + sizeof(t_chunk), getpagesize())));
 }
 
 void			*malloc(size_t size)
@@ -102,7 +85,7 @@ void			*malloc(size_t size)
 	size_t	max_small;
 	int		page_size;
 
-        size = align(size, 16);
+	size = align(size, 16);
 	page_size = getpagesize();
 	max_tiny = page_size * TINY / 100 - sizeof(t_chunk);
 	max_small = page_size * SMALL / 100 - sizeof(t_chunk);

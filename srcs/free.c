@@ -6,7 +6,7 @@
 /*   By: legrivel <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/13 00:36:51 by legrivel     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/13 00:36:53 by legrivel    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/02/04 17:06:13 by legrivel    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,7 +24,7 @@ static void	free_page(t_chunk *previous, t_chunk **chunks,
 	else
 		previous->next = (*tmp)->next;
 	*tmp = ((void *)(*tmp)) - total[0];
-	munmap(*tmp, get_chunk_size((*tmp)->size, total[1]));
+	munmap(*tmp, align((*tmp)->size, total[1]));
 }
 
 static void	free_in_chunk(t_chunk *chunk,
@@ -75,7 +75,8 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 			*chunks = (*chunks)->next;
 		else
 			previous->next = tmp->next;
-                munmap(chunk, get_chunk_size(chunk->size + sizeof(t_chunk), getpagesize()));
+		munmap(chunk,
+align(chunk->size + sizeof(t_chunk), getpagesize()));
 	}
 	else
 		free_in_chunk(chunk, chunks, getpagesize() * type);
