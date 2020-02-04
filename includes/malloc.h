@@ -24,11 +24,9 @@
 
 struct			s_chunk
 {
-	size_t		size;
+	unsigned int	freed:1;
+	size_t		size:63;
 	void		*next;
-	char		freed;
-	int			a;
-	int			b;
 };
 
 typedef struct s_chunk		t_chunk;

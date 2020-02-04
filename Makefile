@@ -12,7 +12,7 @@
 # **************************************************************************** #
 
 NAME = libmalloc.so
-SRCS = free.c malloc.c print.c realloc.c utils.c
+SRCS = free.c malloc.c print.c realloc.c utils.c calloc.c
 OBJS = $(SRCS:.c=.o)
 SRCS_PATH = ./srcs/
 INCS_PATH = ./includes/
