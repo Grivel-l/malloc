@@ -27,8 +27,8 @@ struct			s_chunk
 	size_t		size;
 	void		*next;
 	char		freed;
-        int             a;
-        int             b;
+	int			a;
+	int			b;
 };
 
 typedef struct s_chunk		t_chunk;
@@ -36,15 +36,16 @@ typedef struct s_chunk		t_chunk;
 extern t_chunk		*(g_chunks[3]);
 
 void			*malloc(size_t size);
+void			*calloc(size_t count, size_t size);
 
 void			free(void *ptr);
 
 int				get_type(size_t size);
 t_chunk			*get_base_chunk(t_chunk *chunk, int type);
-size_t			get_chunk_size(size_t size, int page_size);
+size_t			align(size_t size, int page_size);
 int				check_freed(t_chunk **tmp, size_t total,
-				size_t page_freed, size_t chunk_size);
+		size_t page_freed, size_t chunk_size);
 
 void			print_alloc_mem(t_chunk *chunks0,
-t_chunk *chunks1, t_chunk *chunks2);
+		t_chunk *chunks1, t_chunk *chunks2);
 #endif
