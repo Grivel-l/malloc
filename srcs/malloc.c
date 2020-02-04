@@ -55,12 +55,11 @@ static t_chunk	*get_next_chunk(t_chunk *chunk, size_t size, size_t chunk_size)
 		if (total + chunk->size + sizeof(t_chunk) > chunk_size &&
 				total + size + sizeof(t_chunk) <= chunk_size)
 			return (append_chunk(previous, size));
-		if (size <= chunk->size && chunk->freed)
-		{
-			chunk->size = size;
-			chunk->freed = 0;
-			return (chunk);
-		}
+		/* if (size <= chunk->size && chunk->freed) */
+		/* { */
+		/* 	chunk->freed = 0; */
+		/* 	return (chunk); */
+		/* } */
 		total = total > chunk_size ?
 chunk->size + sizeof(t_chunk) : total + chunk->size + sizeof(t_chunk);
 		previous = chunk;

@@ -72,11 +72,10 @@ static void	free_chunk(t_chunk *chunk, t_chunk **chunks, int type)
 			tmp = tmp->next;
 		}
 		if (previous == NULL)
-			*chunks = tmp->next;
+			*chunks = (*chunks)->next;
 		else
-			previous->next = chunk->next;
-		if (previous != NULL)
-			munmap(chunk, chunk->size);
+			previous->next = tmp->next;
+                munmap(chunk, get_chunk_size(chunk->size + sizeof(t_chunk), getpagesize()));
 	}
 	else
 		free_in_chunk(chunk, chunks, getpagesize() * type);
@@ -112,7 +111,6 @@ static int	check(void *ptr)
 
 void		free(void *ptr)
 {
-        return ;
 	int		type;
 	t_chunk	*chunk;
 
