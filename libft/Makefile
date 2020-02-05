@@ -34,6 +34,7 @@ OBJS = ft_isalpha.o ft_memccpy.o ft_memset.o ft_putnbr_fd.o ft_strcmp.o  \
 	   ft_quotesclosed.o ft_trim.o ft_strsplit_qhv.o ft_strrchr_qh.o \
 	   ft_addchar.o ft_checkquotes.o ft_strochr.o
 
+CC = /usr/bin/gcc
 FLAGS = -Wall -Wextra -Werror -Ofast
 
 all: $(NAME)
@@ -42,7 +43,7 @@ $(NAME): $(OBJS)
 	ar rcs $(NAME) $(OBJS)
 
 %.o: $(SRCS_PATH)%.c
-	gcc $(FLAGS) -I $(INCS_PATH) -c $(SRCS_PATH)$*.c
+	$(CC) $(FLAGS) -I $(INCS_PATH) -c $(SRCS_PATH)$*.c
 
 clean:
 	rm -f $(OBJS)

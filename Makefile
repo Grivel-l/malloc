@@ -18,12 +18,12 @@ SRCS_PATH = ./srcs/
 INCS_PATH = ./includes/
 LIB_PATH = ./libft/
 FLAGS = -Wall -Wextra -Werror -Ofast
-COMPILER = /usr/bin/gcc
+CC = /usr/bin/gcc
 
 all: $(NAME)
 
 $(NAME): $(LIB_PATH) $(OBJS)
-	$(COMPILER) $(FLAGS) -shared -o $(NAME) $(OBJS) $(LIB_PATH)libft.a
+	$(CC) $(FLAGS) -shared -o $(NAME) $(OBJS) $(LIB_PATH)libft.a
 
 $(LIB_PATH): $(LIB_PATH)libft.a
 
@@ -31,7 +31,7 @@ $(LIB_PATH)libft.a:
 	make -C $(LIB_PATH)
 
 %.o: $(SRCS_PATH)%.c $(INCS_PATH)malloc.h
-	$(COMPILER) $(FLAGS) -I $(INCS_PATH) -c $<
+	$(CC) $(FLAGS) -I $(INCS_PATH) -c $<
 
 clean:
 	make -C $(LIB_PATH) clean
