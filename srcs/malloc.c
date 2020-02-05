@@ -12,7 +12,6 @@
 /* ************************************************************************** */
 
 #include "malloc.h"
-#include <stdio.h>
 
 t_chunk *(g_chunks[3]) = {NULL, NULL, NULL};
 

@@ -11,7 +11,6 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include <signal.h>
 #include "malloc.h"
 
 static void	free_page(t_chunk *previous, t_chunk **chunks,
